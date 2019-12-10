@@ -2,18 +2,19 @@
     "collab_server" : "",
     "contents" : "",
     "created" : 1576005485820.000,
-    "dirty" : false,
+    "dirty" : true,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "3844198951",
+    "hash" : "0",
     "id" : "C7618D62",
-    "lastKnownWriteTime" : 1576011038,
-    "last_content_update" : 1576011038064,
+    "lastKnownWriteTime" : 1576011432,
+    "last_content_update" : 1576011494901,
     "path" : "C:/Users/diyab/Desktop/website/content/Project2.Rmd",
     "project_path" : "content/Project2.Rmd",
     "properties" : {
-        "cursorPosition" : "73,111",
-        "scrollLine" : "80"
+        "cursorPosition" : "97,174",
+        "last_setup_crc32" : "684246E2bb338d19",
+        "scrollLine" : "97"
     },
     "read_only" : false,
     "read_only_alternatives" : [

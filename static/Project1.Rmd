@@ -11,11 +11,12 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Exploring the Minimum Wage and Housing Market in the United States 
-### Introduction: Two major predictors of the health of the US economy have always consistently been the housing market prices and the wage levels. I found two very interesting datasets, both on Kaggle. The first is a data set of US state and federal minimum wages from 1968 to 2017 per state and county, collected by the US Department of Labor. This dataset includes 2750 observations and 9 variables. The useful information it provides is: state, year, max and min wage, Consumer Price Index average, and wage equivalencies for 2018 so. The second dataset is a rent index data containing information about state-wise housing prices (per sqft) from 2010 to 2017, originally from Zillow. This dataset includes 13131 observations and 81 variables (because it has not been tidied). Most of the variables are months and years that have been recorded in a wide instead of long format. The other useful variables apart from these are: state, city, populaition rank, and metro. I chose these two datasets because I think that is has a very high potential for analysis and for making predictions about the future.
+<h1>Exploring the Minimum Wage and Housing Market in the United States</h1>
+
+Introduction: Two major predictors of the health of the US economy have always consistently been the housing market prices and the wage levels. I found two very interesting datasets, both on Kaggle. The first is a data set of US state and federal minimum wages from 1968 to 2017 per state and county, collected by the US Department of Labor. This dataset includes 2750 observations and 9 variables. The useful information it provides is: state, year, max and min wage, Consumer Price Index average, and wage equivalencies for 2018 so. The second dataset is a rent index data containing information about state-wise housing prices (per sqft) from 2010 to 2017, originally from Zillow. This dataset includes 13131 observations and 81 variables (because it has not been tidied). Most of the variables are months and years that have been recorded in a wide instead of long format. The other useful variables apart from these are: state, city, populaition rank, and metro. I chose these two datasets because I think that is has a very high potential for analysis and for making predictions about the future.
 
 
-### First I tided up the minimum wage dataset. This dataset seemed to have multiple rows that did not have any actual data and were just represented by three dots (...). I removed these because they were the equivalent of NAs. I also deleted the "Table_Data" column because it was repetitive information (high and low cols already existed for wages)
+First I tided up the minimum wage dataset. This dataset seemed to have multiple rows that did not have any actual data and were just represented by three dots (...). I removed these because they were the equivalent of NAs. I also deleted the "Table_Data" column because it was repetitive information (high and low cols already existed for wages)
 
 ```{R}
 #install.packages("dplyr")
@@ -42,7 +43,7 @@ min_wage_2 <- min_wage_1 %>% select(-Table_Data, -Footnote)
 
 ```
 
-### Next, I tidied the second dataset (housing proce index). The data seemed to be unnecessarily wide here because every month and year had its own column. I used pivot_longer() to convert these columns to rows and make the data longer. I also needed to make the states from the two datasets match (acronym vs full length name), so I used recode to manually convert each state acronym to its full name (tried using the function abbr2state but it wasn't working right). I did the same for year. 
+Next, I tidied the second dataset (housing proce index). The data seemed to be unnecessarily wide here because every month and year had its own column. I used pivot_longer() to convert these columns to rows and make the data longer. I also needed to make the states from the two datasets match (acronym vs full length name), so I used recode to manually convert each state acronym to its full name (tried using the function abbr2state but it wasn't working right). I did the same for year. 
 
 ```{R}
 # now tidy up the housing dataset 
@@ -65,7 +66,7 @@ housing_2 <- housing_2 %>% na.omit()
 
                                   
 ```
-### After I tidied both datasets, I merged them by both state and year using inner_join(). I used inner_join() and not any other type of merge function because I did not want there to be any NAs after I merge them. Using inner_join() ensured that. I had to first use mutate() to coerce the 'Year' column from the min_wage dataset to have character and not numeric values so that it would match the housing dataset. When the inner join was done, 111,617 cases were dropped because the minimum wage dataset contains data for years from 1968-2017 while the housing dataset only contains years 2010-2017. I don't see this being a problem because there are still over 850,000 observations so it is enough to conduct analysis on.
+After I tidied both datasets, I merged them by both state and year using inner_join(). I used inner_join() and not any other type of merge function because I did not want there to be any NAs after I merge them. Using inner_join() ensured that. I had to first use mutate() to coerce the 'Year' column from the min_wage dataset to have character and not numeric values so that it would match the housing dataset. When the inner join was done, 111,617 cases were dropped because the minimum wage dataset contains data for years from 1968-2017 while the housing dataset only contains years 2010-2017. I don't see this being a problem because there are still over 850,000 observations so it is enough to conduct analysis on.
 
 ```{r}
 # convert Year values to categorical so that merging is possible  
@@ -85,18 +86,18 @@ full_data %>% glimpse()
 
 ```
 
-###In this part of the project, I try to learn more about my dataset by: 
-1. Creating a new variable 'Avg.Wage', that is the mean of 'Max.Wage' and 'Min.Wage' (using mutate()). The reason why I created this variable is, I think it is a more representative value for wage than either maximum or minimum wage. I will be using this variable instead from now on whenever I want to find relationships between wage levels and anything else.
+In this part of the project, I try to learn more about my dataset by:</h4>
+*1. Creating a new variable 'Avg.Wage', that is the mean of 'Max.Wage' and 'Min.Wage' (using mutate()). The reason why I created this variable is, I think it is a more representative value for wage than either maximum or minimum wage. I will be using this variable instead from now on whenever I want to find relationships between wage levels and anything else.*
 
-2. Creating a correlation matrix with all of my numeric variables using select() and cor(). I think this is a crucial part of finding out trends in my dataset. The numeric variables I chose to include are 'Population.Rank', 'CPI.Average', and 'Avg.Wage'. I deliberately left out variables like 'Max.2018.Wage.Equivalent' because it would have had a misleading perfect correlation with 'Avg.Wage'. In other words, some of these extra variables are redundant because they just aim to portray the same information in a more meaningful and digestible way.
+*2. Creating a correlation matrix with all of my numeric variables using select() and cor(). I think this is a crucial part of finding out trends in my dataset. The numeric variables I chose to include are 'Population.Rank', 'CPI.Average', and 'Avg.Wage'. I deliberately left out variables like 'Max.2018.Wage.Equivalent' because it would have had a misleading perfect correlation with 'Avg.Wage'. In other words, some of these extra variables are redundant because they just aim to portray the same information in a more meaningful and digestible way.*
 
-3. Creating summary statistics for all the numeric variables, using summary(), to find out more about them briefly before I delve further
+*3. Creating summary statistics for all the numeric variables, using summary(), to find out more about them briefly before I delve further*
 
-4. Creating more detailed and specialized summary statistics using summarize() for wage data after grouping based on the categorical variable 'State' using group_by(). The summary statistics include mean, sd, se, max, min, count, and range. I wanted to use these statistics to figure out which states had the highest mean wages. I made this task simpler using arrange() in descending order. The state with the highest mean wage turned out to be New York! 
+*4. Creating more detailed and specialized summary statistics using summarize() for wage data after grouping based on the categorical variable 'State' using group_by(). The summary statistics include mean, sd, se, max, min, count, and range. I wanted to use these statistics to figure out which states had the highest mean wages. I made this task simpler using arrange() in descending order. The state with the highest mean wage turned out to be New York!*
 
-5. Creating more summary statistics, this time for house pricing data, again using summarize(), this time grouped by the categorical variable 'Year' using group_by().
+*5. Creating more summary statistics, this time for house pricing data, again using summarize(), this time grouped by the categorical variable 'Year' using group_by().*
 
-6. Creating summary statistics like in the previous case and then using filter() to find the state with the highest housing price per sqft. It turned out to be California at $2106.476!
+*6. Creating summary statistics like in the previous case and then using filter() to find the state with the highest housing price per sqft. It turned out to be California at $2106.476!*
 
 
 ```{r}
@@ -124,7 +125,7 @@ full_data %>% group_by(State) %>% summarize(mean_price = mean(Price.Per.Sqft, na
 
 
 ```
-###The scatter plot below shows the relationship between year and average wage depending on state. This is an interesting graph because identifying the states that experienced steep increases in average wage levels could give us some insight into relative state of economies. For example, the states for which the minimum wage stayed exactly the same over a period of 7 years include: Wyoming, Wisconsin, Texas, and Utah. On the other hand, the states for which the mimumum wage saw a great leap between years included: Massachusetts, Minnesota, Montana, New York, and Washington. This is extremely interesting because perhaps a variable that can further be added to this data set is the categorical variable that either groups a state as republican or democratic. Although, of course, the states I listed above are not representative, it seems as though primarily blue states underwent major minumum wage transitions while red states remained fairly static.
+The scatter plot below shows the relationship between year and average wage depending on state. This is an interesting graph because identifying the states that experienced steep increases in average wage levels could give us some insight into relative state of economies. For example, the states for which the minimum wage stayed exactly the same over a period of 7 years include: Wyoming, Wisconsin, Texas, and Utah. On the other hand, the states for which the mimumum wage saw a great leap between years included: Massachusetts, Minnesota, Montana, New York, and Washington. This is extremely interesting because perhaps a variable that can further be added to this data set is the categorical variable that either groups a state as republican or democratic. Although, of course, the states I listed above are not representative, it seems as though primarily blue states underwent major minumum wage transitions while red states remained fairly static.
 
 
 ```{r}
@@ -141,7 +142,7 @@ ggplot(full_data, aes(x = Year, y = Avg.Wage, color = State)) + ggtitle("Relatio
 
 ```
 
-###The scatter plot below shows the relationship between housing pricing per sqft and average wage faceted based on state. From the plots below, it seems like a few states like California, Massachusetts, and Hawaii experienced ggradual increases in housing price index over the years. However, most of the states seem to have remained fairly stable with respect to this variable. One uniting factor is that all these states seem to be on the rise for housing prices. One interesting anomaly to this statement, however, is Rhode Island, which seemed to experience a little dip in 2012.
+The scatter plot below shows the relationship between housing pricing per sqft and average wage faceted based on state. From the plots below, it seems like a few states like California, Massachusetts, and Hawaii experienced ggradual increases in housing price index over the years. However, most of the states seem to have remained fairly stable with respect to this variable. One uniting factor is that all these states seem to be on the rise for housing prices. One interesting anomaly to this statement, however, is Rhode Island, which seemed to experience a little dip in 2012.
 
 ```{r}
 # faceted (by State) bar plot demonstrating relationship between year and house pricing per sqft
@@ -150,7 +151,7 @@ ggplot(full_data, aes(x = Year, y = Price.Per.Sqft, fill = State)) + geom_bar(st
 
 ```
 
-###The bar plot below shows the relationship between year and mean Consumer Price Index for each state. There seems to be a general gradual increase in CPI from 2010 to 2016 for all of the states. This can be explained by the fact that industries in the United States have generally flourished since 2010 and inflation has led to a steady increase in pricing of goods and services.
+The bar plot below shows the relationship between year and mean Consumer Price Index for each state. There seems to be a general gradual increase in CPI from 2010 to 2016 for all of the states. This can be explained by the fact that industries in the United States have generally flourished since 2010 and inflation has led to a steady increase in pricing of goods and services.
 
 
 ```{r}
@@ -158,7 +159,7 @@ ggplot(full_data, aes(x = Year, y = Price.Per.Sqft, fill = State)) + geom_bar(st
 ggplot(full_data, aes(x = Year, y = CPI.Average, fill = Year)) + geom_bar(stat = "summary", fun.y = "mean", width = 0.7) + scale_y_continuous(name = "CPI.Average") +  stat_summary(fun.data = mean_se, geom="errorbar", width=0.3) + ggtitle("Relationship between Year and Consumer Price Index based on State") + facet_wrap(~State) + theme(axis.text.x = element_text(angle = 45, size = 8, hjust = 1))
 
 ```
-###After creating a correlation heatmap for all the main numeric variables, I found some interesting relationships. Two sets of variables that appeared to have slightly significant positive correlations were: average wage and consumer price index, and average wage and housing price per sqft. The former case makes sense because as inflation made goods and services more expensive, governments had to raise minimum wage levels so that the general public could maintain their quality of life and standard of living. The latter case also makes sense because as housing prices increase, employers are pressured to raise the wages they are paying to the laborforce so that they can afford rent. Average wage and population ranking had a negative correlation. This also makes sense because a state highly ranked in terms of population (one that has a very high population) will require a high demand for land, making housing prices go up. California and New York, for example, are two of the most populated states and both of them have very high relative minimum wages. Consumer price index and population rank are not correlated at all, which is surprising. 
+After creating a correlation heatmap for all the main numeric variables, I found some interesting relationships. Two sets of variables that appeared to have slightly significant positive correlations were: average wage and consumer price index, and average wage and housing price per sqft. The former case makes sense because as inflation made goods and services more expensive, governments had to raise minimum wage levels so that the general public could maintain their quality of life and standard of living. The latter case also makes sense because as housing prices increase, employers are pressured to raise the wages they are paying to the laborforce so that they can afford rent. Average wage and population ranking had a negative correlation. This also makes sense because a state highly ranked in terms of population (one that has a very high population) will require a high demand for land, making housing prices go up. California and New York, for example, are two of the most populated states and both of them have very high relative minimum wages. Consumer price index and population rank are not correlated at all, which is surprising. 
 
 
 ```{r}
@@ -169,9 +170,10 @@ cor_mat <- melt(cor_matrix)
 ggplot(cor_mat, aes(x=Var1, y=Var2, fill = value)) + geom_tile() + theme(axis.text.x = element_text(angle = 45, size = 8, hjust = 1)) + scale_fill_gradient(low = "mistyrose2", high = "mediumvioletred") + labs(fill = "Correlation") + ggtitle("Correlation between Numerical Variables in Dataset")
 
 ```
-###Lastly, I conducted a Principal Component Analysis (PCA). I followed the steps that we discussed in class. My data was already prepped from previous actions when I was tidying it up. I just had to use scale() so that the data would be normalized. I then ran princomp() on the scaled data. After finding the eigenvalues by squaring the standard deviations and rounding these, I found that there were three principal components with variance proportions of 0.43, 0.33, and 0.24 respectively. I tried to use the rules of thumb we discussed in class as much as possible:
-1. The scree plot looked relatively flat, with no flagrant 'elbows' with the first three PCs. 2. The cumulative proportion of the first three PCs is more than 80% (83.5%)  
-3. Following Kaiser's rule, only PC1 and PC2 had eigenvalues higher than 1 (1.454 and 1.044 respectively)
+Lastly, I conducted a Principal Component Analysis (PCA). I followed the steps that we discussed in class. My data was already prepped from previous actions when I was tidying it up. I just had to use scale() so that the data would be normalized. I then ran princomp() on the scaled data. After finding the eigenvalues by squaring the standard deviations and rounding these, I found that there were three principal components with variance proportions of 0.43, 0.33, and 0.24 respectively. I tried to use the rules of thumb we discussed in class as much as possible:
+*1. The scree plot looked relatively flat, with no flagrant 'elbows' with the first three PCs.*
+*2. The cumulative proportion of the first three PCs is more than 80% (83.5%).*  
+*3. Following Kaiser's rule, only PC1 and PC2 had eigenvalues higher than 1 (1.454 and 1.044 respectively).*
 Based on this analysis, I decided to use the first 2 PCs.
 
 PC1 seems to account for most of the variation, seeing as its prop of variation is 0.36.
