@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1576007489445.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "200BA294",
+    "lastKnownWriteTime" : 1576007501,
+    "last_content_update" : 1576007501670,
+    "path" : "C:/Users/diyab/Desktop/website/content/blog/2019-12-10-test-blog.Rmd",
+    "project_path" : "content/blog/2019-12-10-test-blog.Rmd",
+    "properties" : {
+        "cursorPosition" : "9,25",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
