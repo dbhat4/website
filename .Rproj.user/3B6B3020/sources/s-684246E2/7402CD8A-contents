@@ -1,0 +1,229 @@
+---
+title: "Project 1 (Exploratory Data Analysis)"
+author: "Diya Bhat (db39588)"
+date: "10/20/2019"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Exploring the Minimum Wage and Housing Market in the United States 
+### Introduction: Two major predictors of the health of the US economy have always consistently been the housing market prices and the wage levels. I found two very interesting datasets, both on Kaggle. The first is a data set of US state and federal minimum wages from 1968 to 2017 per state and county, collected by the US Department of Labor. This dataset includes 2750 observations and 9 variables. The useful information it provides is: state, year, max and min wage, Consumer Price Index average, and wage equivalencies for 2018 so. The second dataset is a rent index data containing information about state-wise housing prices (per sqft) from 2010 to 2017, originally from Zillow. This dataset includes 13131 observations and 81 variables (because it has not been tidied). Most of the variables are months and years that have been recorded in a wide instead of long format. The other useful variables apart from these are: state, city, populaition rank, and metro. I chose these two datasets because I think that is has a very high potential for analysis and for making predictions about the future.
+
+
+### First I tided up the minimum wage dataset. This dataset seemed to have multiple rows that did not have any actual data and were just represented by three dots (...). I removed these because they were the equivalent of NAs. I also deleted the "Table_Data" column because it was repetitive information (high and low cols already existed for wages)
+
+```{R}
+install.packages("dplyr")
+install.packages("tidyverse")
+install.packages("tidyr")
+install.packages("ggplot2")
+library(dplyr)
+library(tidyverse)
+library(tidyr)
+library(ggplot2)
+
+# read in both the datasets 
+min_wage <- read.csv("C:/Users/diyab/Desktop/website/content/Minimum_Wage_Data.csv")
+min_wage %>% glimpse()
+housing <- read.csv("C:/Users/diyab/Desktop/website/content/Zillow_Housing_Data.csv")
+housing %>% glimpse()
+
+# start by tidying the min_wage dataset 
+# remove all the rows missing wage data 
+min_wage_1 <- min_wage %>% filter(!Table_Data == "...")
+
+# delete the 'Table_Data' col because the high and low cols already exist 
+min_wage_2 <- min_wage_1 %>% select(-Table_Data, -Footnote) 
+
+```
+
+### Next, I tidied the second dataset (housing proce index). The data seemed to be unnecessarily wide here because every month and year had its own column. I used pivot_longer() to convert these columns to rows and make the data longer. I also needed to make the states from the two datasets match (acronym vs full length name), so I used recode to manually convert each state acronym to its full name (tried using the function abbr2state but it wasn't working right). I did the same for year. 
+
+```{R}
+# now tidy up the housing dataset 
+install.packages("openintro")
+library(openintro)
+
+# make the wise data long using picot_longer() and then separate the merged month and year entries on the basis of a ".". Finally, make the values from the previous wide data rows into a new column and name this "Price.Per.Sqft" 
+housing_1 <- housing %>% pivot_longer(cols = c('Nov.10':'Jan.17'), names_to = "Year", values_to = "Price.Per.Sqft") %>% separate(Year, into = c("Month", "Year"), convert = T, extra = "merge", fill = "right")
+housing_1 %>% glimpse()
+
+# recode states to match the other dataset 
+# I know this is tedious/inefficient and I apologize!
+housing_1 <- housing_1 %>% mutate(State  =  recode(State, "AK" = "Alaska", "AL" = "Alabama", "AR" = "Arkansas", "AZ" = "Arizona", "CA" = "California", "CO" = "Colorado", "CT" = "Connecticut", "DC" = "District of Colombia", "DE" = "Delaware", "FL" = "Florida", "GA" = "Georgia", "HI" = "Hawaii", "IA" = "Iowa", "ID" = "Idaho", "IL" = "Illinois", "IN" = "Indiana", "KS" = "Kansas", "KY" = "Kentucky", "LA" = "Louisiana", "MA" = "Massachusetts", "MD" = "Maryland", "ME" = "Maine", "MI" = "Mississippi", "MN" = "Minnesota", "MO" = "Montana", "MS" = "Missouri", "MT" = "Massachusetts", "NC" = "North Carolina", "ND" = "Nevada", "NE" = "Nebraksa", "NH" = "New Hampshire", "NJ" = "New Jersey", "NM" = "New Mexico", "NV" = "Nevada", "NY" = "New York", "OH" = "Ohio", "OK" = "Oklahoma", "OR" = "Oregon", "PA" = "Pennsylvania", "RI" = "Rhode Island", "SC" = "South Carolina", "SD" = "South Dakota", "TN" = "Tennessee", "TX" = "Texas", "UT" = "Utah", "VA" = "Virginia", "VT" = "Vermont", "WA" = "Washington", "WI" = "Wisconsin", "WV" = "West Virginia", "WY" = "Wyoming")) %>% glimpse()
+
+# recode the years as four digit numbers to match other dataset 
+housing_2 <- housing_1 %>% mutate(Year = recode(Year, "10" = "2010", "11" = "2011", "12" = "2012", "13" = "2013", "14" = "2014", "15" = "2015", "16" = "2016", "17" = "2017")) %>% glimpse()
+
+# delete the value column filled with NAs
+housing_2 <- housing_2 %>% na.omit()
+
+                                  
+```
+### After I tidied both datasets, I merged them by both state and year using inner_join(). I used inner_join() and not any other type of merge function because I did not want there to be any NAs after I merge them. Using inner_join() ensured that. I had to first use mutate() to coerce the 'Year' column from the min_wage dataset to have character and not numeric values so that it would match the housing dataset. When the inner join was done, 111,617 cases were dropped because the minimum wage dataset contains data for years from 1968-2017 while the housing dataset only contains years 2010-2017. I don't see this being a problem because there are still over 850,000 observations so it is enough to conduct analysis on.
+
+```{r}
+# convert Year values to categorical so that merging is possible  
+min_wage_2 <- min_wage_2 %>% mutate(Year = as.factor(Year))
+housing_2 <- housing_2 %>%  mutate(Year = as.factor(Year))
+
+# join the two datasets by common variables 'Year' and 'State'
+full_data <- inner_join(housing_2, min_wage_2, by=c("Year","State"))
+full_data %>% glimpse()
+
+# remove all the NAs from dataset
+full_data <- full_data %>% na.omit()
+
+# give the cols more descriptive and intuitive names 
+full_data <- full_data %>% rename("Max.Wage" = "High.Value", "Min.Wage" = "Low.Value", "Max.2018.Wage.Equivalent" = "High.2018","Min.2018.Wage.Equivalent" = "Low.2018") 
+full_data %>% glimpse()
+
+```
+
+###In this part of the project, I try to learn more about my dataset by: 
+1. Creating a new variable 'Avg.Wage', that is the mean of 'Max.Wage' and 'Min.Wage' (using mutate()). The reason why I created this variable is, I think it is a more representative value for wage than either maximum or minimum wage. I will be using this variable instead from now on whenever I want to find relationships between wage levels and anything else.
+
+2. Creating a correlation matrix with all of my numeric variables using select() and cor(). I think this is a crucial part of finding out trends in my dataset. The numeric variables I chose to include are 'Population.Rank', 'CPI.Average', and 'Avg.Wage'. I deliberately left out variables like 'Max.2018.Wage.Equivalent' because it would have had a misleading perfect correlation with 'Avg.Wage'. In other words, some of these extra variables are redundant because they just aim to portray the same information in a more meaningful and digestible way.
+
+3. Creating summary statistics for all the numeric variables, using summary(), to find out more about them briefly before I delve further
+
+4. Creating more detailed and specialized summary statistics using summarize() for wage data after grouping based on the categorical variable 'State' using group_by(). The summary statistics include mean, sd, se, max, min, count, and range. I wanted to use these statistics to figure out which states had the highest mean wages. I made this task simpler using arrange() in descending order. The state with the highest mean wage turned out to be New York! 
+
+5. Creating more summary statistics, this time for house pricing data, again using summarize(), this time grouped by the categorical variable 'Year' using group_by().
+
+6. Creating summary statistics like in the previous case and then using filter() to find the state with the highest housing price per sqft. It turned out to be California at $2106.476!
+
+
+```{r}
+full_data <- full_data %>% mutate(Year = as.numeric(Year))
+
+#1. create a new variable that is the average of Max and Min wage using mutate(). We will use this from now on instead of high or low wage because it is a better representation of wage levels
+full_data <- full_data %>% mutate(Avg.Wage = (Max.Wage + Min.Wage) / 2)
+full_data %>% glimpse()
+
+#2. correlation matrix for numeric variables. This will be used later ot make a correlation heatmap  
+cor_matrix <- full_data %>% select_if(is.numeric) %>% select(-City.Code, -Max.Wage, -Min.Wage, -Max.2018.Wage.Equivalent, -Min.2018.Wage.Equivalent, -Year) %>% scale %>% cov %>% round(2)
+cor_matrix
+
+#3. snapshot of summary statistics for the main 4 numeric variables 
+full_data %>% select_if(is.numeric) %>% select(-Max.Wage, -Min.Wage, -City.Code, -Max.2018.Wage.Equivalent, -Min.2018.Wage.Equivalent) %>% summary()
+
+#4. summary statistics for each state's average wage level over 7 years, including mean, sd, se, max, min, count, and range. Finally, this data is arranged in descending order according to mean_wage to more easily see which states had the highest mean wage level and which the lowest 
+full_data %>% group_by(State) %>% summarize(mean_wage = mean(Avg.Wage, na.rm=T), sd_wage = sd(Avg.Wage, na.rm = T), n = n(), se_wage = sd_wage/sqrt(n), max_wage = max(Avg.Wage), min_wage = min(Avg.Wage), range = max_wage - min_wage) %>% arrange(desc(mean_wage)) %>% glimpse()
+
+#5. summary statistics for each year's Consumer Price Index, including mean, count, max, and min
+full_data %>% group_by(State) %>% summarize(mean_price = mean(Price.Per.Sqft, na.rm=T), n = n(), max_price = max(Price.Per.Sqft), min_price = min(Price.Per.Sqft), sd_price = sd(Price.Per.Sqft, na.rm = T), se_price = sd_price/sqrt(n)) %>% glimpse()
+
+#6. using summary statistics to find which state has the highest mean housing price per sqft
+full_data %>% group_by(State) %>% summarize(mean_price = mean(Price.Per.Sqft, na.rm=T)) %>% filter(mean_price == max(mean_price))
+
+
+```
+###The scatter plot below shows the relationship between year and average wage depending on state. This is an interesting graph because identifying the states that experienced steep increases in average wage levels could give us some insight into relative state of economies. For example, the states for which the minimum wage stayed exactly the same over a period of 7 years include: Wyoming, Wisconsin, Texas, and Utah. On the other hand, the states for which the mimumum wage saw a great leap between years included: Massachusetts, Minnesota, Montana, New York, and Washington. This is extremely interesting because perhaps a variable that can further be added to this data set is the categorical variable that either groups a state as republican or democratic. Although, of course, the states I listed above are not representative, it seems as though primarily blue states underwent major minumum wage transitions while red states remained fairly static.
+
+
+```{r}
+
+# change 'Year' to a numeric variable just for this scatterplot 
+full_data <- full_data %>% mutate(Year = as.numeric(Year))
+
+# scatterplot showing the relationship between years and average wage level, color-coded based on state
+ggplot(full_data, aes(x = Year, y = Avg.Wage, color = State)) + ggtitle("Relationship between Time and Average Wage Depending on State") + xlab("Years") + ylab("Avg Wage ($/hr)") + theme(legend.position = "right") + geom_point(size = 4) +  geom_line() +
+  guides(shape = guide_legend(override.aes = list(size = 0.5))) +
+  guides(color = guide_legend(override.aes = list(size = 0.5))) +
+  theme(legend.title = element_text(size = 7), legend.text = element_text(size = 7))
+
+
+```
+
+###The scatter plot below shows the relationship between housing pricing per sqft and average wage faceted based on state. From the plots below, it seems like a few states like California, Massachusetts, and Hawaii experienced ggradual increases in housing price index over the years. However, most of the states seem to have remained fairly stable with respect to this variable. One uniting factor is that all these states seem to be on the rise for housing prices. One interesting anomaly to this statement, however, is Rhode Island, which seemed to experience a little dip in 2012.
+
+```{r}
+# faceted (by State) bar plot demonstrating relationship between year and house pricing per sqft
+ggplot(full_data, aes(x = Year, y = Price.Per.Sqft, fill = State)) + geom_bar(stat = "summary", fun.y = "mean", width = 0.7) + scale_y_continuous(name = "Housing Price ($/Sqft)") +  stat_summary(fun.data = mean_se, geom = "errorbar", width=0.3) + ggtitle("Relationship between Year and House Pricing per sqft based on State") + facet_wrap(~State) + theme(axis.text.x = element_text(angle = 45, size = 8, hjust = 1))  + theme(legend.position = "none")
+
+
+```
+
+###The bar plot below shows the relationship between year and mean Consumer Price Index for each state. There seems to be a general gradual increase in CPI from 2010 to 2016 for all of the states. This can be explained by the fact that industries in the United States have generally flourished since 2010 and inflation has led to a steady increase in pricing of goods and services.
+
+
+```{r}
+# faceted (by State) bar plot demonstrating relationship between year and CPI
+ggplot(full_data, aes(x = Year, y = CPI.Average, fill = Year)) + geom_bar(stat = "summary", fun.y = "mean", width = 0.7) + scale_y_continuous(name = "CPI.Average") +  stat_summary(fun.data = mean_se, geom="errorbar", width=0.3) + ggtitle("Relationship between Year and Consumer Price Index based on State") + facet_wrap(~State) + theme(axis.text.x = element_text(angle = 45, size = 8, hjust = 1))
+
+```
+###After creating a correlation heatmap for all the main numeric variables, I found some interesting relationships. Two sets of variables that appeared to have slightly significant positive correlations were: average wage and consumer price index, and average wage and housing price per sqft. The former case makes sense because as inflation made goods and services more expensive, governments had to raise minimum wage levels so that the general public could maintain their quality of life and standard of living. The latter case also makes sense because as housing prices increase, employers are pressured to raise the wages they are paying to the laborforce so that they can afford rent. Average wage and population ranking had a negative correlation. This also makes sense because a state highly ranked in terms of population (one that has a very high population) will require a high demand for land, making housing prices go up. California and New York, for example, are two of the most populated states and both of them have very high relative minimum wages. Consumer price index and population rank are not correlated at all, which is surprising. 
+
+
+```{r}
+# correlation heatmap with all the numeric variables for the dataset 
+install.packages("reshape2")
+library(reshape2)
+cor_mat <- melt(cor_matrix)
+ggplot(cor_mat, aes(x=Var1, y=Var2, fill = value)) + geom_tile() + theme(axis.text.x = element_text(angle = 45, size = 8, hjust = 1)) + scale_fill_gradient(low = "mistyrose2", high = "mediumvioletred") + labs(fill = "Correlation") + ggtitle("Correlation between Numerical Variables in Dataset")
+
+```
+###Lastly, I conducted a Principal Component Analysis (PCA). I followed the steps that we discussed in class. My data was already prepped from previous actions when I was tidying it up. I just had to use scale() so that the data would be normalized. I then ran princomp() on the scaled data. After finding the eigenvalues by squaring the standard deviations and rounding these, I found that there were three principal components with variance proportions of 0.43, 0.33, and 0.24 respectively. I tried to use the rules of thumb we discussed in class as much as possible:
+1. The scree plot looked relatively flat, with no flagrant 'elbows' with the first three PCs. 2. The cumulative proportion of the first three PCs is more than 80% (83.5%)  
+3. Following Kaiser's rule, only PC1 and PC2 had eigenvalues higher than 1 (1.454 and 1.044 respectively)
+Based on this analysis, I decided to use the first 2 PCs.
+
+PC1 seems to account for most of the variation, seeing as its prop of variation is 0.36.
+From the loadings plot, we can see that the two most higly correlated variables are: Average wage with CPI Average and Average wage with Price per sqft. This is evident because for the arrows for these two sets of variables are closest together, symbolizing a high degree of correlation. This matches up to the analysis from the correlation heatmap. The two most distant variables (ones with the lowest correlation with each other) are Price per sqft and Population rank. Population rank seems to have a generally lower correlation with all the other variables.
+
+
+```{r}
+# select only the relevant numeric variables 
+full_data_1 <- full_data %>% select(-City.Code, -Max.Wage, -Min.Wage, -Max.2018.Wage.Equivalent, -Min.2018.Wage.Equivalent, -Year)
+
+# scale numeric variables  
+full_data_numeric <- full_data_1 %>% select_if(is.numeric) %>% scale
+
+# use the princomp() function on these scaled variables 
+full_data_pca <- princomp(full_data_numeric)
+
+# view pca information including: sdev, varprop, and cum prop of components AND the loadings information
+summary(full_data_pca, loadings=T)
+
+# convery standard devs to eigenvalues by squaring them
+eigval <- full_data_pca$sdev^2 
+eigval
+
+# proportion of var explained by each PC; cumulative varprops
+varprop <- round(eigval/sum(eigval),2) 
+varprop 
+
+# non-cumulative varprops 
+round(cumsum(eigval)/sum(eigval),2)
+
+# plot showing the proportion of variance explained by each principal component 
+ggplot() + geom_bar(aes(y=varprop,x=1:4),stat="identity")+xlab("")+geom_path(aes(y=varprop,x=1:4))+
+ geom_text(aes(x=1:4,y = varprop, label = round(varprop, 2)),vjust=1,col="white",size=5)+
+ ggtitle("Proportion of Variance Explained by each PC")
+
+
+# plot PC1 and PC2 
+full_data_df <- data.frame(PC1 = full_data_pca $ scores[, 1], PC2 = full_data_pca $ scores[, 2])
+ggplot(full_data_df, aes(PC1, PC2)) + geom_point() + ggtitle("PC1 and PC2")
+
+# loadings plot
+full_data_pca $ loadings[1:4,1:2] %>% as.data.frame %>% rownames_to_column %>%
+ggplot() + geom_hline(aes(yintercept = 0), lty = 2) +
+ geom_vline(aes(xintercept = 0), lty = 2) + ylab("PC2") + xlab("PC1") +
+ geom_segment(aes(x = 0, y = 0, xend = Comp.1, yend = Comp.2), arrow = arrow(), col = "red") +
+ geom_label(aes(x = Comp.1*1.1, y = Comp.2*1.1,label=rowname)) + ggtitle("Loadings Plot")
+
+
+# biplot
+full_data %>% mutate(PC1 = full_data_pca$scores[,1], PC2 = full_data_pca$scores[, 2]) %>%
+ ggplot(aes(x = PC1, y = PC2, color = State)) + geom_point() + ggtitle("Correlation Biplot")
+
+
+```
+

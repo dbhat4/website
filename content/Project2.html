@@ -1,0 +1,528 @@
+---
+title: "Project 2"
+author: "Diya Bhat"
+date: "November 21, 2019"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+
+
+<div id="modeling-the-important-factors-that-contribute-to-historical-mass-conflicts" class="section level3">
+<h3>Modeling the Important Factors that Contribute to Historical Mass Conflicts</h3>
+<p>##0. Introduction: Throughout history, we have seen wars and conflicts of varying scale. From the Civil War 1865 to WWI starting in 1914, we have seen schisms root from a multitude of reasons. Our inability to determine which exact factors predict the coming of a war, puts us in an eternal state of peril because we do not know how to avoid what we cannot identify as a direct causation. This dataset aims to aid this school of thought by considering a wide range of variables that potentially ignited a war or conflict. These variables are mostly binary. The conflict response is measured via the numeric variables: deaths (extent of damage) and months (duration). Most of the explanatory variables are binary apart from numGroups, which is numeric and deatails the number of participants involved in the conflict. The variables that I will be including in my analysis are: nat.grp (nation vs group in other nation), grp.grpSame (groups in same nation), grp.grpDiff (groups in different nations), difWealth (whether or not there were differences in financial resources between groups), difRelig (whether or not there were differences in religion between groups), sameLanguage (whether or not there were differences in language between groups), difLegal (Whether or not there were differences in legal systems and rules between groups), enjoyFight (whether or not the participants enjoyed fighting), overpopulated (whether or not origin countries were overpopulated), and fightForPay (whether the participants were mecenaries and had financial motivations).</p>
+<p>##I first tidied up the dataset by only selecting the relevant variables, using pivot_longer() to combine the three variables ‘international’, ‘colonial’, and ‘revolution’ into a single variable called ‘Scale_of_Conflict’.</p>
+<pre class="r"><code>r = getOption(&quot;repos&quot;)
+r[&quot;CRAN&quot;] = &quot;http://cran.us.r-project.org&quot;
+options(repos = r)
+#install.packages(&quot;dplyr&quot;)
+#install.packages(&quot;tidyverse&quot;)
+#install.packages(&quot;tidyr&quot;)
+#install.packages(&quot;ggplot2&quot;)
+library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(tidyr)
+library(tidyverse)</code></pre>
+<pre><code>## -- Attaching packages ---------------------------------------------------- tidyverse 1.3.0 --</code></pre>
+<pre><code>## &lt;U+2713&gt; ggplot2 3.2.1     &lt;U+2713&gt; purrr   0.3.3
+## &lt;U+2713&gt; tibble  2.1.3     &lt;U+2713&gt; stringr 1.4.0
+## &lt;U+2713&gt; readr   1.3.1     &lt;U+2713&gt; forcats 0.4.0</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------------------- tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code># load the package and library containing the dataset &quot;Quarrel&quot;
+#install.packages(&quot;HistData&quot;)
+library(HistData)
+data(Quarrels)
+
+# only select the relevant variables 
+Quar_tidy &lt;- Quarrels %&gt;% select(ID, year, international, colonial, revolution, nat.grp, grp.grpSame, grp.grpDif, numGroups, months, deaths, difWealth, difRelig, sameLanguage, difLegal, enjoyFight, overpopulated, fightForPay)
+
+# combine the vars &#39;international&#39;, &#39;colonial&#39;, and &#39;revolution&#39; into a single variable called &#39;scale of conflict. This will be the categorical variable for future analysis&#39; 
+Quar_tidier &lt;- Quar_tidy %&gt;% pivot_longer(cols = c(&#39;international&#39;, &#39;colonial&#39;, &#39;revolution&#39;), names_to = &quot;Scale_of_Conflict&quot;, values_to = &quot;Yes&quot;) %&gt;% filter(Yes == &quot;1&quot;) %&gt;% select(-Yes)</code></pre>
+<p>##1. I conducted a MANOVA to test whether either of my numeric variables ‘deaths’ or ‘months’ show a mean difference across levels of the categorical variable ‘Scale_of_Conflict’. Before this, I eyeballed it and tested to see if the data passed some of the assumptions. The data failed the multivariate normality assumptions because when deaths was plotted against months, there seemed to be some sort of pre-existing relationship between the two variables. The data also fails the homogeneity assumption because there doesn’t seem to be equality of covariances between the two variables. However, the MANOVA was conducted anyway.</p>
+<pre class="r"><code># testing roughly for the multivariate assumption
+ggplot(Quar_tidier, aes(x = deaths, y = months)) +
+geom_point(alpha = .5) + ggtitle(&quot;Correlation between Deaths and Months of Conflict&quot;)</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre class="r"><code># testing roughly for the homogeneity assumption
+covmats&lt;- Quar_tidier %&gt;% select(Scale_of_Conflict, deaths, months) %&gt;% group_by(Scale_of_Conflict) %&gt;% do(covs = cov(.[2:3]))
+for(i in 1:3){print(covmats$covs[i])}</code></pre>
+<pre><code>## [[1]]
+##            deaths      months
+## deaths 2690643515 1235821.690
+## months    1235822    3765.515
+## 
+## [[1]]
+##              deaths      months
+## deaths 7.652428e+13 91085734.74
+## months 9.108573e+07     2419.46
+## 
+## [[1]]
+##              deaths       months
+## deaths 1.162655e+13 2.491939e+07
+## months 2.491939e+07 9.155041e+02</code></pre>
+<pre class="r"><code># conduct the MANOVA test 
+man &lt;- manova(cbind(deaths, months) ~ Scale_of_Conflict, data = Quar_tidier)
+summary(man)</code></pre>
+<pre><code>##                    Df  Pillai approx F num Df den Df    Pr(&gt;F)    
+## Scale_of_Conflict   2 0.21037   25.155      4    856 &lt; 2.2e-16 ***
+## Residuals         428                                             
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>summary.aov(man) # univariate ANOVAs </code></pre>
+<pre><code>##  Response deaths :
+##                    Df     Sum Sq   Mean Sq F value    Pr(&gt;F)    
+## Scale_of_Conflict   2 4.0120e+15 2.006e+15  49.335 &lt; 2.2e-16 ***
+## Residuals         428 1.7403e+16 4.066e+13                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+##  Response months :
+##                    Df  Sum Sq Mean Sq F value  Pr(&gt;F)  
+## Scale_of_Conflict   2   16629  8314.3  3.4894 0.03139 *
+## Residuals         428 1019822  2382.8                  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code># pairwise t-tests for either numeric variable 
+pairwise.t.test(Quar_tidier $ deaths, Quar_tidier$Scale_of_Conflict, p.adj=&quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  Quar_tidier$deaths and Quar_tidier$Scale_of_Conflict 
+## 
+##               colonial international
+## international &lt; 2e-16  -            
+## revolution    0.4      1.9e-13      
+## 
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>pairwise.t.test(Quar_tidier $ months, Quar_tidier$Scale_of_Conflict, p.adj=&quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  Quar_tidier$months and Quar_tidier$Scale_of_Conflict 
+## 
+##               colonial international
+## international 0.080    -            
+## revolution    0.009    0.210        
+## 
+## P value adjustment method: none</code></pre>
+<p><em>MANOVA Report: A (MANOVA) was conducted to determine the effect of scale of conflict (international, colonial, revolution) on two dependent variables (number of deaths and months of conflict). Significant differences were found among the three scales of conflict on the two dependent measures, Univariate analyses of variance (ANOVAs) for each dependent variable were conducted as follow-up tests to the MANOVA, using the Bonferroni method for controlling Type I error rates for multiple comparisons. The univariate ANOVAs for deaths and months were also found to be significant (p-values &lt; 2.2e-16 and 0.03139). Post hoc analysis was performed conducting pairwise comparisons to determine which scale of conflict differed in deaths and months. All three conflict levels were found to differ significantly from each other in terms of deaths and months after adjusting for multiple comparisons (bonferroni). For the deaths reponse variable, significant differences were found between international and colonial (p-value &lt; 2e-16) and revolution and international (p-value 1.9e-13). For the response variable months, significant differences were found between revolution and colonial only (p-value 0.009).</em>
+<em>In total I performed 1 MANOVA, 2 ANOVAs, and 6 t tests for a total of 9 tests. Therefore, the probability of at least one type I error (if unadjusted) would have been 1-(1-0.05)^9 = 0.370. After the Bonferroni correction, the new alpha level was 0.05/9 = 0.00556 (which is what was used to determine significance for all the tests).</em></p>
+<p>##2. I chose to conduct a randomization test where I compared the mean deaths between 2 of the 3 levels of my categorical variable ‘Scale of Conflict’. To do this, I created a new dataset called ‘Quar_rand’ by filtering out all the ‘international’ rows and only chose ‘colonial’ and ‘revolution’ rows because these two categories have more similar means.
+### Null hytpothesis: The mean number of deaths between colonial and revolution conflicts are the same.
+### Alternative hypothesis: The mean number of deaths between colonial and revolution conflicts are not the same.</p>
+<pre class="r"><code># create a new dataset where all the &#39;international&#39; rows are filtered out so that only &#39;revolution&#39; and &#39;colonial&#39; mean deaths are compared for the test 
+Quar_rand &lt;- Quar_tidier %&gt;% filter(Scale_of_Conflict != &quot;international&quot;)
+
+# find the mean difference in deaths between the groups &#39;colonial&#39; and &#39;revolution&#39;
+Quar_rand %&gt;% group_by(Scale_of_Conflict) %&gt;% summarize(mean = mean(deaths)) %&gt;% summarize(diff(mean))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `diff(mean)`
+##          &lt;dbl&gt;
+## 1      729933.</code></pre>
+<pre class="r"><code># sample from these two groups many times and create a vector that has all the mean differences from each of these samples 
+rand_dist &lt;- vector()
+for(i in 1:5000){
+new &lt;- data.frame(deaths = sample(Quar_rand$deaths),Scale_of_Conflict = Quar_rand$Scale_of_Conflict)
+rand_dist[i] &lt;- mean(new[new$Scale_of_Conflict == &quot;revolution&quot;,]$deaths)-
+mean(new[new$Scale_of_Conflict == &quot;colonial&quot;,]$deaths)}
+{hist(rand_dist); abline(v = 729932.9   ,col=&quot;red&quot;)}</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre class="r"><code># find the p-value using this mean and the vector 
+mean(rand_dist &gt; 729932.9)*2 </code></pre>
+<pre><code>## [1] 8e-04</code></pre>
+<p><em>The calculated mean difference in deaths between the ‘colonial’ and ‘revolution’ levels of the categorical variable ‘Scale of Conflict’ was found to be 729932.9 (can be seen plotted as the red line on the graph above). The p-value using this value is 8e-04. Since 8e-04 is much lower than 0.05, we reject the null hypothesis and conclude that the mean deaths between colonial and revolution conflicts are not the same. The histogram above shows the distribution of the mean differences in the rand_dist vector, plotted in the context of the actual mean.</em></p>
+<p>##3. Next, I built a linear regression model predicting the numeric response variable ‘deaths’ from the numeric variables ‘months’ and ‘numGroups’, including their interaction.
+##I checked ssumptions of linearity, normality, and homoskedasticity. To see if the homoskedasticity assumption is met, I ran the Breusch Pagan test and got a p-value of 1.633e-08, which is lower than 0.05 and leads us to conclude that this assumption is not met. The graph of residuals demonstrates that linearity assumption is not met because the data points show a clear pattern. To test the normality assumption, I plotted a histogram of the residuals and ran the One-sample Kolmogorov-Smirnov test. The right-skewed plot and the low p-value of &lt; 2.2e-16 from the KS test further confirm that this normality assumption is not met. However, the regression was performed anyway.</p>
+<pre class="r"><code>#install.packages(&quot;lmtest&quot;)
+#install.packages(&quot;sandwich&quot;)
+library(lmtest)</code></pre>
+<pre><code>## Loading required package: zoo</code></pre>
+<pre><code>## 
+## Attaching package: &#39;zoo&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     as.Date, as.Date.numeric</code></pre>
+<pre class="r"><code>library(sandwich)
+
+# mean center both numeric variables 
+Quar_tidier$months_c &lt;- Quar_tidier$months - mean(Quar_tidier$months)
+Quar_tidier$numGroups_c &lt;- Quar_tidier$numGroups - mean(Quar_tidier$numGroups)
+
+# build a regression model predicting deaths from months, number of groups involved, and their interaction 
+fit_num &lt;- lm(deaths ~ months_c * numGroups_c, data = Quar_tidier)
+summary(fit_num)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = deaths ~ months_c * numGroups_c, data = Quar_tidier)
+## 
+## Residuals:
+##       Min        1Q    Median        3Q       Max 
+## -15162396  -1804249    -98467    700938  20636000 
+## 
+## Coefficients:
+##                        Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)           3.372e+06  1.870e+05  18.037   &lt;2e-16 ***
+## months_c             -5.796e+03  4.417e+03  -1.312    0.190    
+## numGroups_c           9.339e+05  2.971e+04  31.431   &lt;2e-16 ***
+## months_c:numGroups_c  3.712e+00  5.775e+02   0.006    0.995    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 3801000 on 427 degrees of freedom
+## Multiple R-squared:  0.7119, Adjusted R-squared:  0.7099 
+## F-statistic: 351.7 on 3 and 427 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code># regression interaction plot 
+reg &lt;-predict(fit_num, Quar_tidier)
+ggplot(Quar_tidier, aes(numGroups_c, deaths)) + geom_point() + geom_line(data = Quar_tidier, aes(y = reg)) +
+  ggtitle(&quot;Regression Plot&quot;)</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<pre class="r"><code># check assumptions
+# check for homoskedasticity with the Breusch Pagan test 
+resids &lt;- fit_num$residuals; fitvals &lt;- fit_num$fitted.values
+# check for linearity by plotting the residuals 
+ggplot() + geom_point(aes(fitvals, resids)) + geom_hline(yintercept=0, col=&quot;red&quot;) +
+  ggtitle(&quot;Check for Homoskedasticity&quot;)</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-4-2.png" width="672" /></p>
+<pre class="r"><code>bptest(fit_num) </code></pre>
+<pre><code>## 
+##  studentized Breusch-Pagan test
+## 
+## data:  fit_num
+## BP = 39.125, df = 3, p-value = 1.633e-08</code></pre>
+<pre class="r"><code># check for normality with the ks test and graphically by making a histogram of residuals 
+ggplot()+geom_histogram(aes(resids),bins=20) + ggtitle(&quot;Check for Normality&quot;)</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-4-3.png" width="672" /></p>
+<pre class="r"><code>ks.test(resids, &quot;pnorm&quot;, sd=sd(resids))</code></pre>
+<pre><code>## Warning in ks.test(resids, &quot;pnorm&quot;, sd = sd(resids)): ties should not be present
+## for the Kolmogorov-Smirnov test</code></pre>
+<pre><code>## 
+##  One-sample Kolmogorov-Smirnov test
+## 
+## data:  resids
+## D = 0.23724, p-value &lt; 2.2e-16
+## alternative hypothesis: two-sided</code></pre>
+<pre class="r"><code># recompute regression results with robust standard errors
+coeftest(fit_num, vcov=vcovHC(fit_num))</code></pre>
+<pre><code>## 
+## t test of coefficients:
+## 
+##                         Estimate  Std. Error t value Pr(&gt;|t|)    
+## (Intercept)          3372200.173  210715.893 16.0035   &lt;2e-16 ***
+## months_c               -5795.974    6771.193 -0.8560   0.3925    
+## numGroups_c           933933.264   47819.663 19.5303   &lt;2e-16 ***
+## months_c:numGroups_c       3.712    2089.354  0.0018   0.9986    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p><em>When regression results were rerun with robust standard errors, I found that numGroups was the only significant predictor of deaths (p-value of &lt;2e-16). months and the interaction between numGroups and months were both non-significant predictors because they had p-values larger than 0.05. This means that controlling for months, there is a significant effect of numGroups on deaths. For every one unit increase in numGroups, the number of deaths increases by 9.339e+05 on average, t = 31.431, df = 427. With respect to significant predictors, there is no difference between before/after robust SEs. From the R-squared value, we can conclude that 71.19% of variation in the outcome is explained by this model.</em></p>
+<p>##4. Reran same regression model (with interaction), but this time compute bootstrapped standard errors.</p>
+<pre class="r"><code># repeat 5000 times, saving the coefficients each time
+samp_distn &lt;- replicate(5000, {
+ boot_dat &lt;- Quar_tidier[sample(nrow(Quar_tidier),replace=TRUE),]
+ fit_boot &lt;- lm(deaths ~ months_c * numGroups_c, data = boot_dat)
+ coef(fit_boot)
+})
+
+# estimated SEs
+samp_distn %&gt;% t %&gt;% as.data.frame %&gt;% summarize_all(sd)</code></pre>
+<pre><code>##   (Intercept) months_c numGroups_c months_c:numGroups_c
+## 1      201743 5092.094     42658.8             1325.144</code></pre>
+<p><em>When computing bootstrapped errors, we see that the standard error for each of the variables and the interaction siginificantly increases compared to the original SEs. However, they decrease with respect to the robust standard errors. Therefore, the original SEs are probably the best ones to use for the purpose of building the model because we aim to decrease standard error. Becuase of the formula, if the standard error gets smaller, he t- statistic gets bigger and the p-value gets smaller. Therefore, from the previous conclusions about the change in standard error between the original, robust, and bootstrapped SEs, we can conclude that the original SE model would have the lowest p-values, followed by the bootstrapped SE model, and then the robust SE model.</em></p>
+<p>##5. Next, I performed a logistic regression predicting the binary categorical variable ‘sameLanguage’ from all other variables in the datset. ‘sameLanguage’ is a binary variable which is 1 if the fighting groups share the same language and 0 if they hav different languages.</p>
+<pre class="r"><code>#install.packages(&quot;plotROC&quot;)
+library(plotROC) 
+
+# predict the binary variable &#39;sameLanguage&#39;, from all the other variables in the dataset 
+#fit_bin&lt;-glm(sameLanguage ~ difRelig + difWealth + numGroups_c + difLegal + Scale_of_Conflict, data=Quar_tidier,family=binomial(link=&quot;logit&quot;))
+fit_bin&lt;-glm(sameLanguage ~., data=Quar_tidier,family=binomial(link=&quot;logit&quot;))
+summary(fit_bin) # viewing the coefficients </code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = sameLanguage ~ ., family = binomial(link = &quot;logit&quot;), 
+##     data = Quar_tidier)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.6989  -0.4813  -0.2380  -0.1283   2.5023  
+## 
+## Coefficients: (5 not defined because of singularities)
+##                                  Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)                    -2.114e+01  8.842e+00  -2.391  0.01682 *  
+## ID                             -1.701e-03  1.071e-03  -1.588  0.11224    
+## year                            1.061e-02  4.830e-03   2.197  0.02800 *  
+## nat.grp                                NA         NA      NA       NA    
+## grp.grpSame                            NA         NA      NA       NA    
+## grp.grpDif                             NA         NA      NA       NA    
+## numGroups                      -4.243e-02  7.170e-02  -0.592  0.55399    
+## months                          4.542e-03  3.064e-03   1.482  0.13822    
+## deaths                         -1.312e-07  6.909e-08  -1.898  0.05765 .  
+## difWealth1                      1.800e+00  6.058e-01   2.972  0.00296 ** 
+## difRelig1                      -9.267e-01  1.264e+00  -0.733  0.46358    
+## difRelig2                      -1.607e+00  3.956e-01  -4.062 4.87e-05 ***
+## difLegal1                       4.646e-01  1.257e+00   0.369  0.71177    
+## enjoyFight1                    -1.571e+01  1.820e+03  -0.009  0.99311    
+## enjoyFight2                    -1.781e+01  3.956e+03  -0.005  0.99641    
+## overpopulated1                 -1.226e+01  1.395e+03  -0.009  0.99299    
+## overpopulated2                 -1.499e+01  3.956e+03  -0.004  0.99698    
+## fightForPay1                    1.583e+01  3.956e+03   0.004  0.99681    
+## Scale_of_Conflictinternational  1.234e-01  5.337e-01   0.231  0.81720    
+## Scale_of_Conflictrevolution     2.445e+00  4.679e-01   5.226 1.74e-07 ***
+## months_c                               NA         NA      NA       NA    
+## numGroups_c                            NA         NA      NA       NA    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 401.51  on 430  degrees of freedom
+## Residual deviance: 257.64  on 414  degrees of freedom
+## AIC: 291.64
+## 
+## Number of Fisher Scoring iterations: 16</code></pre>
+<pre class="r"><code>coef(fit_bin) %&gt;% round(3) # original scale (log-odds scale)</code></pre>
+<pre><code>##                    (Intercept)                             ID 
+##                        -21.137                         -0.002 
+##                           year                        nat.grp 
+##                          0.011                             NA 
+##                    grp.grpSame                     grp.grpDif 
+##                             NA                             NA 
+##                      numGroups                         months 
+##                         -0.042                          0.005 
+##                         deaths                     difWealth1 
+##                          0.000                          1.800 
+##                      difRelig1                      difRelig2 
+##                         -0.927                         -1.607 
+##                      difLegal1                    enjoyFight1 
+##                          0.465                        -15.708 
+##                    enjoyFight2                 overpopulated1 
+##                        -17.810                        -12.265 
+##                 overpopulated2                   fightForPay1 
+##                        -14.992                         15.830 
+## Scale_of_Conflictinternational    Scale_of_Conflictrevolution 
+##                          0.123                          2.445 
+##                       months_c                    numGroups_c 
+##                             NA                             NA</code></pre>
+<pre class="r"><code>exp(coef(fit_bin)) %&gt;% round(3) # exponentiated (odds scale)</code></pre>
+<pre><code>##                    (Intercept)                             ID 
+##                          0.000                          0.998 
+##                           year                        nat.grp 
+##                          1.011                             NA 
+##                    grp.grpSame                     grp.grpDif 
+##                             NA                             NA 
+##                      numGroups                         months 
+##                          0.958                          1.005 
+##                         deaths                     difWealth1 
+##                          1.000                          6.052 
+##                      difRelig1                      difRelig2 
+##                          0.396                          0.200 
+##                      difLegal1                    enjoyFight1 
+##                          1.591                          0.000 
+##                    enjoyFight2                 overpopulated1 
+##                          0.000                          0.000 
+##                 overpopulated2                   fightForPay1 
+##                          0.000                    7493435.554 
+## Scale_of_Conflictinternational    Scale_of_Conflictrevolution 
+##                          1.131                         11.532 
+##                       months_c                    numGroups_c 
+##                             NA                             NA</code></pre>
+<pre class="r"><code>prob &lt;- predict(fit_bin, type = &quot;response&quot;)
+truth &lt;- Quar_tidier$sameLanguage
+
+# confusion matrix
+table(predict = as.numeric(prob &gt; .5), truth) %&gt;% addmargins</code></pre>
+<pre><code>##        truth
+## predict   0   1 Sum
+##     0   330  37 367
+##     1    25  39  64
+##     Sum 355  76 431</code></pre>
+<pre class="r"><code># calculate sensitivity (TPR), specificity (TNR), accuracy, and precision (PPV)
+# accuracy
+accu &lt;- (330 + 39)/431
+# sensitivity
+sens &lt;- 39/76
+# specificity
+spec &lt;- 330/355
+# precision
+prec &lt;- 39/64
+
+# plot density of log-odds (logit) by your binary outcome variable
+Quar_logit &lt;- Quar_tidier
+Quar_logit$logit&lt;-predict(fit_bin) #get predicted log-odds
+Quar_logit$language&lt;-factor(Quar_logit$sameLanguage,levels=c(&quot;1&quot;,&quot;0&quot;))
+ggplot(Quar_logit,aes(logit, fill=language))+geom_density(alpha=.3)+
+  geom_vline(xintercept=0,lty=2) + 
+scale_fill_discrete(name = &quot;Language&quot;, labels = c(&quot;same&quot;, &quot;different&quot;))</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code># ROC plot and AUC calculation
+Quar_roc &lt;- Quar_tidier
+Quar_roc$sameLang &lt;- ifelse(Quar_roc$sameLanguage == &quot;1&quot;, 1, 0)
+fit_bin2&lt;-glm(sameLang ~., data=Quar_roc,family=binomial(link=&quot;logit&quot;))</code></pre>
+<pre><code>## Warning: glm.fit: algorithm did not converge</code></pre>
+<pre class="r"><code>Quar_roc$prob &lt;- predict(fit_bin2, data=Quar_roc, type = &quot;response&quot;)
+ROCplot &lt;- ggplot(Quar_roc) + geom_roc(aes(d = sameLang, m = prob), n.cuts=0) + 
+ geom_segment(aes(x=0,xend=1,y=0,yend=1),lty=2) + ggtitle(&quot;ROC Plot&quot;) 
+ROCplot</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-6-2.png" width="672" /></p>
+<pre class="r"><code>calc_auc(ROCplot)</code></pre>
+<pre><code>##   PANEL group AUC
+## 1     1    -1   1</code></pre>
+<p><em>Since the coefficient estimates were initially returned in the log form, I calculated the exponent of each of the coefficients before interpretation. After this, I found that the significant predictors of sameLanguage were difWealth (groups with a difference in wealth), difRelig (groups with different religions), and Scale_of_ConflictRevolution (the ‘revolution’ level of the categorical variable ‘Scale_of_Conflict). The following are the interpretations of the coefficient estimates in terms of odds:<em>
+</em>For difWealth, odds for having the same language for groups with wealth differences are 6.052 times that of groups with no wealth differences. For difRelig, odds for having the same language for groups with different religions are 0.2 times that of groups with the same religion. For Scale_of_Conflict, odds for having the same language for a revolution is 11.532 times that of colonial. The log(odds) equation is: -21.137 + 1.800difWealth1 - 1.607difRelig2 + 2.445Scale_of_Conflict:revolution.<em>
+</em>The confusion matrix reports an accuracy of 0.856, a sensitivity of 0.513, a specificity of 0.930, and a precision of 0.609. The accuracy and specificity are relatively high, but the sensitivity and precision are low.<em>
+</em>The ROC curve seems to match that of a perfectly predictive model, with AUC score of 1, which is classified as ’great’. However, that is unlikely to be the case here, so it is most likely due to some variational error.</em></p>
+</div>
+<div id="perform-10-fold-or-repeated-random-sub-sampling-cv-and-report-average-out-of-sample-accuracy-sensitivity-and-recall" class="section level2">
+<h2>Perform 10-fold (or repeated random sub-sampling) CV and report average out-of-sample Accuracy, Sensitivity, and Recall</h2>
+<pre class="r"><code># define the class_diag function
+class_diag&lt;-function(probs,truth){
+
+tab&lt;-table(factor(probs&gt;.5,levels=c(&quot;FALSE&quot;,&quot;TRUE&quot;)),truth)
+acc=sum(diag(tab))/sum(tab)
+sens=tab[2,2]/colSums(tab)[2]
+spec=tab[1,1]/colSums(tab)[1]
+ppv=tab[2,2]/rowSums(tab)[2]
+
+if(is.numeric(truth)==FALSE &amp; is.logical(truth)==FALSE) truth&lt;-as.numeric(truth)-1
+
+# calculate AUC
+ord&lt;-order(probs, decreasing=TRUE)
+probs &lt;- probs[ord]; truth &lt;- truth[ord]
+
+TPR=cumsum(truth)/max(1,sum(truth)) 
+FPR=cumsum(!truth)/max(1,sum(!truth))
+
+dup&lt;-c(probs[-1]&gt;=probs[-length(probs)], FALSE)
+TPR&lt;-c(0,TPR[!dup],1); FPR&lt;-c(0,FPR[!dup],1)
+
+n &lt;- length(TPR)
+auc&lt;- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+
+data.frame(acc,sens,spec,ppv,auc)
+}
+
+set.seed(1234)
+k=10
+
+data1&lt;-Quar_tidier[sample(nrow(Quar_tidier)),]
+folds&lt;-cut(seq(1:nrow(Quar_tidier)),breaks=k,labels=F)
+
+diags&lt;-NULL
+for(i in 1:k){
+train&lt;-data1[folds!=i,]
+test&lt;-data1[folds==i,]
+truth&lt;-test$sameLanguage
+fit_bin&lt;-glm(sameLanguage ~ ., data=Quar_tidier,family=binomial(link=&quot;logit&quot;))
+probs&lt;- predict(fit_bin, newdata=test, type=&quot;response&quot;)
+diags&lt;-rbind(diags,class_diag(probs,truth))}</code></pre>
+<pre><code>## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+## prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+## prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+## prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+## prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+## prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+## prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+## prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+## prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+## prediction from a rank-deficient fit may be misleading
+
+## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = if (type == :
+## prediction from a rank-deficient fit may be misleading</code></pre>
+<pre class="r"><code>apply(diags,2,mean)</code></pre>
+<pre><code>##       acc      sens      spec       ppv       auc 
+## 0.8561311 0.5067280 0.9310907 0.6050000 0.8872653</code></pre>
+<p><em>The AUC value from this 10-fold CV for the logistic regression model is 0.887, which is classified as ‘good’. This means that the model is good at predicting the binary variable sameLanguage from all the other variables in the dataset. The accuracy, sensitivity, and precision was found to be 0.856, 0.471, and 0.546 respectively. The specificity was found to be 0.929.</em></p>
+<p>##6. Lasso regression with the binary logistic regression from Part-5 followed by 10-fold CV</p>
+<pre class="r"><code>#install.packages(&quot;glmnet&quot;)
+library(glmnet)</code></pre>
+<pre><code>## Loading required package: Matrix</code></pre>
+<pre><code>## 
+## Attaching package: &#39;Matrix&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:tidyr&#39;:
+## 
+##     expand, pack, unpack</code></pre>
+<pre><code>## Loaded glmnet 3.0-1</code></pre>
+<pre class="r"><code># run the lasso regression to identify significant variables 
+fit_lasso&lt;- glm(sameLanguage~., data = Quar_tidier, family = binomial(link = &quot;logit&quot;))
+x &lt;- model.matrix(fit_lasso)[, -1] # predictor matrix 
+y &lt;- as.matrix(Quar_tidier$sameLanguage) # reponse variable 
+cv1 &lt;- cv.glmnet(x, y, family=&quot;binomial&quot;)
+lasso &lt;-glmnet(x, y, family=&quot;binomial&quot;, lambda=cv1$lambda.1se)
+coef(lasso)</code></pre>
+<pre><code>## 22 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##                                        s0
+## (Intercept)                    -2.2053527
+## ID                              .        
+## year                            .        
+## nat.grp                         .        
+## grp.grpSame                     .        
+## grp.grpDif                      .        
+## numGroups                       .        
+## months                          .        
+## deaths                          .        
+## difWealth1                      0.5143208
+## difRelig1                       .        
+## difRelig2                      -0.1648604
+## difLegal1                       .        
+## enjoyFight1                     .        
+## enjoyFight2                     .        
+## overpopulated1                  .        
+## overpopulated2                  .        
+## fightForPay1                    .        
+## Scale_of_Conflictinternational  .        
+## Scale_of_Conflictrevolution     1.8745430
+## months_c                        .        
+## numGroups_c                     .</code></pre>
+<pre class="r"><code>#add nonzero coefficient variables to a new dataset 
+Quar_lasso &lt;- Quar_tidier
+Quar_lasso$Scale_of_ConflictRevolution &lt;- ifelse(Quar_lasso$Scale_of_Conflict == &quot;revolution&quot;, 1, 0)
+Quar_lasso$difWealth1 &lt;- ifelse(Quar_lasso$difWealth == &quot;1&quot;, 1, 0)
+Quar_lasso$difRelig2 &lt;- ifelse(Quar_lasso$difRelig == &quot;2&quot;, 1, 0)
+Quar_lasso &lt;- Quar_lasso %&gt;% select(-Scale_of_Conflict, -difWealth, -difRelig) # remove the original columns 
+
+# run the 10-fold CV
+set.seed(1234)
+k=10
+
+Quar_data &lt;- Quar_lasso[sample(nrow(Quar_lasso)),]
+folds&lt;-cut(seq(1:nrow(Quar_lasso)),breaks=k,labels=F)
+
+diags&lt;-NULL
+for(i in 1:k){
+train&lt;-Quar_data[folds!=i,]
+test&lt;-Quar_data[folds==i,]
+truth&lt;-test$sameLanguage
+fit_lasso2 &lt;- glm(sameLanguage ~ difWealth1 + difRelig2 + Scale_of_ConflictRevolution, data = Quar_data,family=binomial(link=&quot;logit&quot;))
+probs&lt;- predict(fit_lasso2, newdata=test, type=&quot;response&quot;)
+diags&lt;-rbind(diags,class_diag(probs,truth))}
+
+apply(diags,2,mean)</code></pre>
+<pre><code>##       acc      sens      spec       ppv       auc 
+## 0.8514799 0.6095491 0.9031817 0.5713889 0.8559710</code></pre>
+<p><em>After conducting a lasso regression, I found that the variables retained included difWealth1 (conflict participants with differing levels of financial resource), difRelig2 (conflict participants with multiple different religions between them), and the revolution level of the categorical variable ‘Scale_of_Conflict’. So, I created a new dataframe with only these variables of significance, and reconducted the 10-fold cross-validation model to find out what the effect on the AUC would be. The new AUC turned out to be 0.85, which is still classified as ‘good’ but is a little smaller than the AUC of 0.887 in the logistic regression from part 5. I am not sure why this is the case because we would expect the AUC to be higher when rerunning the regression after filtering out the non-significant variables from the model. Perhaps this has something to do with the fact that most of my dataset contained binary variables and not numerical ones.</em></p>
+</div>
