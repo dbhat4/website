@@ -1,7 +1,7 @@
 ---
 title: "Project 2"
 author: "Diya Bhat"
-date: "November 21, 2019"
+date: "11/21/2019"
 output:
   pdf_document: default
   html_document:
@@ -11,13 +11,13 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-### Modeling the Important Factors that Contribute to Historical Mass Conflicts 
+<h1> Modeling the Important Factors that Contribute to Historical Mass Conflicts </h1>
 
-##0. Introduction: Throughout history, we have seen wars and conflicts of varying scale. From the Civil War 1865 to WWI starting in 1914, we have seen schisms root from a multitude of reasons. Our inability to determine which exact factors predict the coming of a war, puts us in an eternal state of peril because we do not know how to avoid what we cannot identify as a direct causation. This dataset aims to aid this school of thought by considering a wide range of variables that potentially ignited a war or conflict. These variables are mostly binary. The conflict response is measured via the numeric variables: deaths (extent of damage) and months (duration). Most of the explanatory variables are binary apart from numGroups, which is numeric and deatails the number of participants involved in the conflict. The variables that I will be including in my analysis are: nat.grp (nation vs group in other nation), grp.grpSame (groups in same nation), grp.grpDiff (groups in different nations), difWealth (whether or not there were differences in financial resources between groups), difRelig (whether or not there were differences in religion between groups), sameLanguage (whether or not there were differences in language between groups), difLegal (Whether or not there were differences in legal systems and rules between groups), enjoyFight (whether or not the participants enjoyed fighting), overpopulated (whether or not origin countries were overpopulated), and fightForPay (whether the participants were mecenaries and had financial motivations).
+<h3>0. Introduction: Throughout history, we have seen wars and conflicts of varying scale. From the Civil War 1865 to WWI starting in 1914, we have seen schisms root from a multitude of reasons. Our inability to determine which exact factors predict the coming of a war, puts us in an eternal state of peril because we do not know how to avoid what we cannot identify as a direct causation. This dataset aims to aid this school of thought by considering a wide range of variables that potentially ignited a war or conflict. These variables are mostly binary. The conflict response is measured via the numeric variables: deaths (extent of damage) and months (duration). Most of the explanatory variables are binary apart from numGroups, which is numeric and deatails the number of participants involved in the conflict. The variables that I will be including in my analysis are: nat.grp (nation vs group in other nation), grp.grpSame (groups in same nation), grp.grpDiff (groups in different nations), difWealth (whether or not there were differences in financial resources between groups), difRelig (whether or not there were differences in religion between groups), sameLanguage (whether or not there were differences in language between groups), difLegal (Whether or not there were differences in legal systems and rules between groups), enjoyFight (whether or not the participants enjoyed fighting), overpopulated (whether or not origin countries were overpopulated), and fightForPay (whether the participants were mecenaries and had financial motivations).</h3>
 
 
 
-##I first tidied up the dataset by only selecting the relevant variables, using pivot_longer() to combine the three variables 'international', 'colonial', and 'revolution' into a single variable called 'Scale_of_Conflict'.
+*I first tidied up the dataset by only selecting the relevant variables, using pivot_longer() to combine the three variables 'international', 'colonial', and 'revolution' into a single variable called 'Scale_of_Conflict'.*
 ```{R}
 r = getOption("repos")
 r["CRAN"] = "http://cran.us.r-project.org"
@@ -43,7 +43,7 @@ Quar_tidy <- Quarrels %>% select(ID, year, international, colonial, revolution, 
 Quar_tidier <- Quar_tidy %>% pivot_longer(cols = c('international', 'colonial', 'revolution'), names_to = "Scale_of_Conflict", values_to = "Yes") %>% filter(Yes == "1") %>% select(-Yes)
 
 ```
-##1. I conducted a MANOVA to test whether either of my numeric variables 'deaths' or 'months' show a mean difference across levels of the categorical variable 'Scale_of_Conflict'. Before this, I eyeballed it and tested to see if the data passed some of the assumptions. The data failed the multivariate normality assumptions because when deaths was plotted against months, there seemed to be some sort of pre-existing relationship between the two variables. The data also fails the homogeneity assumption because there doesn't seem to be equality of covariances between the two variables. However, the MANOVA was conducted anyway.
+<h3>1. I conducted a MANOVA to test whether either of my numeric variables 'deaths' or 'months' show a mean difference across levels of the categorical variable 'Scale_of_Conflict'. Before this, I eyeballed it and tested to see if the data passed some of the assumptions. The data failed the multivariate normality assumptions because when deaths was plotted against months, there seemed to be some sort of pre-existing relationship between the two variables. The data also fails the homogeneity assumption because there doesn't seem to be equality of covariances between the two variables. However, the MANOVA was conducted anyway.</h3>
 
 ```{R}
 # testing roughly for the multivariate assumption

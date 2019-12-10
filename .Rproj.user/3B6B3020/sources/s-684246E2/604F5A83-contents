@@ -1,86 +1,19 @@
-<!DOCTYPE html>
-<html lang="en-US">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="author" content="Diya Bhat" />
-    <meta name="description" content="Describe your website">
-    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico">
-    <title>Project 2</title>
-    <meta name="generator" content="Hugo 0.60.1" />
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="/css/main.css" />
-    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
-    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
-    
-    <!--[if lt IE 9]>
-			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-		<![endif]-->
-
-    
-  </head>
-
-  <body>
-    <div id="wrap">
-
-      
-      <nav class="navbar navbar-default">
-  <div class="container">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="/"><i class="fa fa-home"></i></a>
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-    </div>
-    <div class="navbar-collapse collapse" id="navbar">
-      <ul class="nav navbar-nav navbar-right">
-      
-        
-        <li><a href="/blog/">BLOG</a></li>
-        
-        <li><a href="/projects/">PROJECTS</a></li>
-        
-        <li><a href="/resume/">RESUME</a></li>
-        
-      
-      </ul>
-    </div>
-  </div>
-</nav>
-
-      
-      <div class="container">
-        <div class="blog-post">
-          <h3>
-            <strong><a href="/project2/">Project 2</a></strong>
-          </h3>
-        </div>
-        <div class="blog-title">
-          <h4>
-          January 1, 0001
-            &nbsp;&nbsp;
-            
-          </h4>
-        </div>
-        <div class="panel panel-default">
-          <div class="panel-body">
-            <div class="blogpost">
-              
+---
+title: "Project 2"
+author: "Diya Bhat"
+date: "November 21, 2019"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
 
 
-<h1>
-Modeling the Important Factors that Contribute to Historical Mass Conflicts
-</h1>
-<h3>
-<ol start="0" style="list-style-type: decimal">
-<li>Introduction: Throughout history, we have seen wars and conflicts of varying scale. From the Civil War 1865 to WWI starting in 1914, we have seen schisms root from a multitude of reasons. Our inability to determine which exact factors predict the coming of a war, puts us in an eternal state of peril because we do not know how to avoid what we cannot identify as a direct causation. This dataset aims to aid this school of thought by considering a wide range of variables that potentially ignited a war or conflict. These variables are mostly binary. The conflict response is measured via the numeric variables: deaths (extent of damage) and months (duration). Most of the explanatory variables are binary apart from numGroups, which is numeric and deatails the number of participants involved in the conflict. The variables that I will be including in my analysis are: nat.grp (nation vs group in other nation), grp.grpSame (groups in same nation), grp.grpDiff (groups in different nations), difWealth (whether or not there were differences in financial resources between groups), difRelig (whether or not there were differences in religion between groups), sameLanguage (whether or not there were differences in language between groups), difLegal (Whether or not there were differences in legal systems and rules between groups), enjoyFight (whether or not the participants enjoyed fighting), overpopulated (whether or not origin countries were overpopulated), and fightForPay (whether the participants were mecenaries and had financial motivations).
-</h3></li>
-</ol>
-<p><em>I first tidied up the dataset by only selecting the relevant variables, using pivot_longer() to combine the three variables ‘international’, ‘colonial’, and ‘revolution’ into a single variable called ‘Scale_of_Conflict’.</em></p>
+
+<div id="modeling-the-important-factors-that-contribute-to-historical-mass-conflicts" class="section level3">
+<h3>Modeling the Important Factors that Contribute to Historical Mass Conflicts</h3>
+<p>##0. Introduction: Throughout history, we have seen wars and conflicts of varying scale. From the Civil War 1865 to WWI starting in 1914, we have seen schisms root from a multitude of reasons. Our inability to determine which exact factors predict the coming of a war, puts us in an eternal state of peril because we do not know how to avoid what we cannot identify as a direct causation. This dataset aims to aid this school of thought by considering a wide range of variables that potentially ignited a war or conflict. These variables are mostly binary. The conflict response is measured via the numeric variables: deaths (extent of damage) and months (duration). Most of the explanatory variables are binary apart from numGroups, which is numeric and deatails the number of participants involved in the conflict. The variables that I will be including in my analysis are: nat.grp (nation vs group in other nation), grp.grpSame (groups in same nation), grp.grpDiff (groups in different nations), difWealth (whether or not there were differences in financial resources between groups), difRelig (whether or not there were differences in religion between groups), sameLanguage (whether or not there were differences in language between groups), difLegal (Whether or not there were differences in legal systems and rules between groups), enjoyFight (whether or not the participants enjoyed fighting), overpopulated (whether or not origin countries were overpopulated), and fightForPay (whether the participants were mecenaries and had financial motivations).</p>
+<p>##I first tidied up the dataset by only selecting the relevant variables, using pivot_longer() to combine the three variables ‘international’, ‘colonial’, and ‘revolution’ into a single variable called ‘Scale_of_Conflict’.</p>
 <pre class="r"><code>r = getOption(&quot;repos&quot;)
 r[&quot;CRAN&quot;] = &quot;http://cran.us.r-project.org&quot;
 options(repos = r)
@@ -116,11 +49,7 @@ Quar_tidy &lt;- Quarrels %&gt;% select(ID, year, international, colonial, revolu
 
 # combine the vars &#39;international&#39;, &#39;colonial&#39;, and &#39;revolution&#39; into a single variable called &#39;scale of conflict. This will be the categorical variable for future analysis&#39; 
 Quar_tidier &lt;- Quar_tidy %&gt;% pivot_longer(cols = c(&#39;international&#39;, &#39;colonial&#39;, &#39;revolution&#39;), names_to = &quot;Scale_of_Conflict&quot;, values_to = &quot;Yes&quot;) %&gt;% filter(Yes == &quot;1&quot;) %&gt;% select(-Yes)</code></pre>
-<h3>
-<ol style="list-style-type: decimal">
-<li>I conducted a MANOVA to test whether either of my numeric variables ‘deaths’ or ‘months’ show a mean difference across levels of the categorical variable ‘Scale_of_Conflict’. Before this, I eyeballed it and tested to see if the data passed some of the assumptions. The data failed the multivariate normality assumptions because when deaths was plotted against months, there seemed to be some sort of pre-existing relationship between the two variables. The data also fails the homogeneity assumption because there doesn’t seem to be equality of covariances between the two variables. However, the MANOVA was conducted anyway.
-</h3></li>
-</ol>
+<p>##1. I conducted a MANOVA to test whether either of my numeric variables ‘deaths’ or ‘months’ show a mean difference across levels of the categorical variable ‘Scale_of_Conflict’. Before this, I eyeballed it and tested to see if the data passed some of the assumptions. The data failed the multivariate normality assumptions because when deaths was plotted against months, there seemed to be some sort of pre-existing relationship between the two variables. The data also fails the homogeneity assumption because there doesn’t seem to be equality of covariances between the two variables. However, the MANOVA was conducted anyway.</p>
 <pre class="r"><code># testing roughly for the multivariate assumption
 ggplot(Quar_tidier, aes(x = deaths, y = months)) +
 geom_point(alpha = .5) + ggtitle(&quot;Correlation between Deaths and Months of Conflict&quot;)</code></pre>
@@ -211,7 +140,7 @@ mean(new[new$Scale_of_Conflict == &quot;colonial&quot;,]$deaths)}
 <p><img src="/Project2_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <pre class="r"><code># find the p-value using this mean and the vector 
 mean(rand_dist &gt; 729932.9)*2 </code></pre>
-<pre><code>## [1] 4e-04</code></pre>
+<pre><code>## [1] 8e-04</code></pre>
 <p><em>The calculated mean difference in deaths between the ‘colonial’ and ‘revolution’ levels of the categorical variable ‘Scale of Conflict’ was found to be 729932.9 (can be seen plotted as the red line on the graph above). The p-value using this value is 8e-04. Since 8e-04 is much lower than 0.05, we reject the null hypothesis and conclude that the mean deaths between colonial and revolution conflicts are not the same. The histogram above shows the distribution of the mean differences in the rand_dist vector, plotted in the context of the actual mean.</em></p>
 <p>##3. Next, I built a linear regression model predicting the numeric response variable ‘deaths’ from the numeric variables ‘months’ and ‘numGroups’, including their interaction.
 ##I checked ssumptions of linearity, normality, and homoskedasticity. To see if the homoskedasticity assumption is met, I ran the Breusch Pagan test and got a p-value of 1.633e-08, which is lower than 0.05 and leads us to conclude that this assumption is not met. The graph of residuals demonstrates that linearity assumption is not met because the data points show a clear pattern. To test the normality assumption, I plotted a histogram of the residuals and ran the One-sample Kolmogorov-Smirnov test. The right-skewed plot and the low p-value of &lt; 2.2e-16 from the KS test further confirm that this normality assumption is not met. However, the regression was performed anyway.</p>
@@ -307,7 +236,7 @@ samp_distn &lt;- replicate(5000, {
 # estimated SEs
 samp_distn %&gt;% t %&gt;% as.data.frame %&gt;% summarize_all(sd)</code></pre>
 <pre><code>##   (Intercept) months_c numGroups_c months_c:numGroups_c
-## 1    204447.7 5082.361    42605.53             1302.717</code></pre>
+## 1      201743 5092.094     42658.8             1325.144</code></pre>
 <p><em>When computing bootstrapped errors, we see that the standard error for each of the variables and the interaction siginificantly increases compared to the original SEs. However, they decrease with respect to the robust standard errors. Therefore, the original SEs are probably the best ones to use for the purpose of building the model because we aim to decrease standard error. Becuase of the formula, if the standard error gets smaller, he t- statistic gets bigger and the p-value gets smaller. Therefore, from the previous conclusions about the change in standard error between the original, robust, and bootstrapped SEs, we can conclude that the original SE model would have the lowest p-values, followed by the bootstrapped SE model, and then the robust SE model.</em></p>
 <p>##5. Next, I performed a logistic regression predicting the binary categorical variable ‘sameLanguage’ from all other variables in the datset. ‘sameLanguage’ is a binary variable which is 1 if the fighting groups share the same language and 0 if they hav different languages.</p>
 <pre class="r"><code>#install.packages(&quot;plotROC&quot;)
@@ -451,6 +380,7 @@ ROCplot</code></pre>
 </em>For difWealth, odds for having the same language for groups with wealth differences are 6.052 times that of groups with no wealth differences. For difRelig, odds for having the same language for groups with different religions are 0.2 times that of groups with the same religion. For Scale_of_Conflict, odds for having the same language for a revolution is 11.532 times that of colonial. The log(odds) equation is: -21.137 + 1.800difWealth1 - 1.607difRelig2 + 2.445Scale_of_Conflict:revolution.<em>
 </em>The confusion matrix reports an accuracy of 0.856, a sensitivity of 0.513, a specificity of 0.930, and a precision of 0.609. The accuracy and specificity are relatively high, but the sensitivity and precision are low.<em>
 </em>The ROC curve seems to match that of a perfectly predictive model, with AUC score of 1, which is classified as ’great’. However, that is unlikely to be the case here, so it is most likely due to some variational error.</em></p>
+</div>
 <div id="perform-10-fold-or-repeated-random-sub-sampling-cv-and-report-average-out-of-sample-accuracy-sensitivity-and-recall" class="section level2">
 <h2>Perform 10-fold (or repeated random sub-sampling) CV and report average out-of-sample Accuracy, Sensitivity, and Recall</h2>
 <pre class="r"><code># define the class_diag function
@@ -596,60 +526,3 @@ apply(diags,2,mean)</code></pre>
 ## 0.8514799 0.6095491 0.9031817 0.5713889 0.8559710</code></pre>
 <p><em>After conducting a lasso regression, I found that the variables retained included difWealth1 (conflict participants with differing levels of financial resource), difRelig2 (conflict participants with multiple different religions between them), and the revolution level of the categorical variable ‘Scale_of_Conflict’. So, I created a new dataframe with only these variables of significance, and reconducted the 10-fold cross-validation model to find out what the effect on the AUC would be. The new AUC turned out to be 0.85, which is still classified as ‘good’ but is a little smaller than the AUC of 0.887 in the logistic regression from part 5. I am not sure why this is the case because we would expect the AUC to be higher when rerunning the regression after filtering out the non-significant variables from the model. Perhaps this has something to do with the fact that most of my dataset contained binary variables and not numerical ones.</em></p>
 </div>
-
-              <hr>
-              <div class="related-posts">
-                <h5>Related Posts</h5>
-                
-              </div>
-            </div>
-          </div>
-          <hr>
-        <div class="disqus">
-  <div id="disqus_thread"></div>
-  <script type="text/javascript">
-
-    (function() {
-      
-      
-      if (window.location.hostname == "localhost")
-        return;
-
-      var disqus_shortname = '';
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-</div>
-        </div>
-      </div>
-      
-    </div>
-
-    
-    <footer>
-  <div id="footer">
-    <div class="container">
-      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
-      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
-    </div>
-  </div>
-</footer>
-<div class="footer"></div>
-
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-<script src="/js/docs.min.js"></script>
-<script src="/js/main.js"></script>
-
-<script src="/js/ie10-viewport-bug-workaround.js"></script>
-
-
-    
-  </body>
-</html>
