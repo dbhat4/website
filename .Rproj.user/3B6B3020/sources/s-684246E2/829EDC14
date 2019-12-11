@@ -5,14 +5,14 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "2529661199",
+    "hash" : "0",
     "id" : "829EDC14",
-    "lastKnownWriteTime" : 1576043141,
-    "last_content_update" : 1576043141797,
+    "lastKnownWriteTime" : 1576043307,
+    "last_content_update" : 1576043307589,
     "path" : "C:/Users/diyab/Desktop/website/config.toml",
     "project_path" : "config.toml",
     "properties" : {
-        "cursorPosition" : "24,35",
+        "cursorPosition" : "24,27",
         "scrollLine" : "15"
     },
     "read_only" : false,

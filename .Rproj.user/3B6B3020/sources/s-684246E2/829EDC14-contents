@@ -22,7 +22,7 @@ theme = "hugo-sustain"
 [params.social]
   Github        = "dbhat4"
   Email         = "diyabhat@utexas.edu"
-  LinkedIn      = "diya-b-974274101"
+  LinkedIn      = "diyabhat"
 
 ## Main Menu
 [[menu.main]]
