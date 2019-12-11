@@ -22,7 +22,7 @@ theme = "hugo-sustain"
 [params.social]
   Github        = "dbhat4"
   Email         = "diyabhat@utexas.edu"
-  LinkedIn      = "Diya Bhat"
+  LinkedIn      = "diya-b-974274101"
 
 ## Main Menu
 [[menu.main]]
@@ -40,3 +40,8 @@ theme = "hugo-sustain"
   identifier = "resume"
   weight = 300
   url = "/resume/"
+[[menu.main]]
+  name = "hobbies"
+  identifier = "hobbies"
+  weight = 400
+  url = "/hobbies/"
