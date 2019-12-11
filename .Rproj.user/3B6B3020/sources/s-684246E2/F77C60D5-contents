@@ -179,7 +179,6 @@ Based on this analysis, I decided to use the first 2 PCs.
 PC1 seems to account for most of the variation, seeing as its prop of variation is 0.36.
 From the loadings plot, we can see that the two most higly correlated variables are: Average wage with CPI Average and Average wage with Price per sqft. This is evident because for the arrows for these two sets of variables are closest together, symbolizing a high degree of correlation. This matches up to the analysis from the correlation heatmap. The two most distant variables (ones with the lowest correlation with each other) are Price per sqft and Population rank. Population rank seems to have a generally lower correlation with all the other variables.
 
-
 ```{r}
 # select only the relevant numeric variables 
 full_data_1 <- full_data %>% select(-City.Code, -Max.Wage, -Min.Wage, -Max.2018.Wage.Equivalent, -Min.2018.Wage.Equivalent, -Year)

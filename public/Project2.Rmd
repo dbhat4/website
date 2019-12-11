@@ -43,7 +43,7 @@ Quar_tidy <- Quarrels %>% select(ID, year, international, colonial, revolution, 
 Quar_tidier <- Quar_tidy %>% pivot_longer(cols = c('international', 'colonial', 'revolution'), names_to = "Scale_of_Conflict", values_to = "Yes") %>% filter(Yes == "1") %>% select(-Yes)
 
 ```
-<h4>1. I conducted a MANOVA to test whether either of my numeric variables 'deaths' or 'months' show a mean difference across levels of the categorical variable 'Scale_of_Conflict'. Before this, I eyeballed it and tested to see if the data passed some of the assumptions. The data failed the multivariate normality assumptions because when deaths was plotted against months, there seemed to be some sort of pre-existing relationship between the two variables. The data also fails the homogeneity assumption because there doesn't seem to be equality of covariances between the two variables. However, the MANOVA was conducted anyway.</h4>
+1. I conducted a MANOVA to test whether either of my numeric variables 'deaths' or 'months' show a mean difference across levels of the categorical variable 'Scale_of_Conflict'. Before this, I eyeballed it and tested to see if the data passed some of the assumptions. The data failed the multivariate normality assumptions because when deaths was plotted against months, there seemed to be some sort of pre-existing relationship between the two variables. The data also fails the homogeneity assumption because there doesn't seem to be equality of covariances between the two variables. However, the MANOVA was conducted anyway.
 
 ```{R}
 # testing roughly for the multivariate assumption
@@ -69,7 +69,7 @@ pairwise.t.test(Quar_tidier $ months, Quar_tidier$Scale_of_Conflict, p.adj="none
 
 
 
-<h4>2. I chose to conduct a randomization test where I compared the mean deaths between 2 of the 3 levels of my categorical variable 'Scale of Conflict'. To do this, I created a new dataset called 'Quar_rand' by filtering out all the 'international' rows and only chose 'colonial' and 'revolution' rows because these two categories have more similar means.</h4>
+2. I chose to conduct a randomization test where I compared the mean deaths between 2 of the 3 levels of my categorical variable 'Scale of Conflict'. To do this, I created a new dataset called 'Quar_rand' by filtering out all the 'international' rows and only chose 'colonial' and 'revolution' rows because these two categories have more similar means.
 *Null hytpothesis: The mean number of deaths between colonial and revolution conflicts are the same.*
 *Alternative hypothesis: The mean number of deaths between colonial and revolution conflicts are not the same.*
 ```{r}
@@ -95,8 +95,8 @@ mean(rand_dist > 729932.9)*2
 
 
 
-<h4>3. Next, I built a linear regression model predicting the numeric response variable 'deaths' from the numeric variables 'months' and 'numGroups', including their interaction.</h4>
-<h4>I checked ssumptions of linearity, normality, and homoskedasticity. To see if the homoskedasticity assumption is met, I ran the Breusch Pagan test and got a p-value of 1.633e-08, which is lower than 0.05 and leads us to conclude that this assumption is not met. The graph of residuals demonstrates that linearity assumption is not met because the data points show a clear pattern. To test the normality assumption, I plotted a histogram of the residuals and ran the One-sample Kolmogorov-Smirnov test. The right-skewed plot and the low p-value of < 2.2e-16 from the KS test further confirm that this normality assumption is not met. However, the regression was performed anyway.</h4>
+3. Next, I built a linear regression model predicting the numeric response variable 'deaths' from the numeric variables 'months' and 'numGroups', including their interaction.
+I checked ssumptions of linearity, normality, and homoskedasticity. To see if the homoskedasticity assumption is met, I ran the Breusch Pagan test and got a p-value of 1.633e-08, which is lower than 0.05 and leads us to conclude that this assumption is not met. The graph of residuals demonstrates that linearity assumption is not met because the data points show a clear pattern. To test the normality assumption, I plotted a histogram of the residuals and ran the One-sample Kolmogorov-Smirnov test. The right-skewed plot and the low p-value of < 2.2e-16 from the KS test further confirm that this normality assumption is not met. However, the regression was performed anyway.
 ```{R}
 #install.packages("lmtest")
 #install.packages("sandwich")
@@ -137,7 +137,7 @@ coeftest(fit_num, vcov=vcovHC(fit_num))
 
 
 
-<h4>4. Reran same regression model (with interaction), but this time compute bootstrapped standard errors.</h4>
+4. Reran same regression model (with interaction), but this time compute bootstrapped standard errors.
 ```{R}
 # repeat 5000 times, saving the coefficients each time
 samp_distn <- replicate(5000, {
@@ -153,7 +153,7 @@ samp_distn %>% t %>% as.data.frame %>% summarize_all(sd)
 *When computing bootstrapped errors, we see that the standard error for each of the variables and the interaction siginificantly increases compared to the original SEs. However, they decrease with respect to the robust standard errors. Therefore, the original SEs are probably the best ones to use for the purpose of building the model because we aim to decrease standard error. Becuase of the formula, if the standard error gets smaller, he t- statistic gets bigger and the p-value gets smaller. Therefore, from the previous conclusions about the change in standard error between the original, robust, and bootstrapped SEs, we can conclude that the original SE model would have the lowest p-values, followed by the bootstrapped SE model, and then the robust SE model.*
  
  
-<h4>5. Next, I performed a logistic regression predicting the binary categorical variable 'sameLanguage' from all other variables in the datset. 'sameLanguage' is a binary variable which is 1 if the fighting groups share the same language and 0 if they hav different languages.</h4>
+5. Next, I performed a logistic regression predicting the binary categorical variable 'sameLanguage' from all other variables in the datset. 'sameLanguage' is a binary variable which is 1 if the fighting groups share the same language and 0 if they hav different languages.
 ```{r}
 #install.packages("plotROC")
 library(plotROC) 
@@ -208,7 +208,7 @@ calc_auc(ROCplot)
 
 
 
-<h4>Perform 10-fold (or repeated random sub-sampling) CV and report average out-of-sample Accuracy, Sensitivity, and Recall</h4>
+Perform 10-fold (or repeated random sub-sampling) CV and report average out-of-sample Accuracy, Sensitivity, and Recall
 ```{r}
 # define the class_diag function
 class_diag<-function(probs,truth){
@@ -259,7 +259,7 @@ apply(diags,2,mean)
  
  
  
-<h4>6. Lasso regression with the binary logistic regression from Part-5 followed by 10-fold CV</h4>
+6. Lasso regression with the binary logistic regression from Part-5 followed by 10-fold CV
 ```{r}
 #install.packages("glmnet")
 library(glmnet)

@@ -1,3 +1,0 @@
-"0","# testing roughly for the multivariate assumption"
-"0","ggplot(Quar_tidier, aes(x = deaths, y = months)) +"
-"0","geom_point(alpha = .5) + ggtitle(""Correlation between Deaths and Months of Conflict"")"

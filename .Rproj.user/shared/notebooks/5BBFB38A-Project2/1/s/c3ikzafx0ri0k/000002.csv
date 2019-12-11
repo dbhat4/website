@@ -1,5 +1,0 @@
-"0","# create a new dataset where all the 'international' rows are filtered out so that only 'revolution' and 'colonial' mean deaths are compared for the test "
-"0","Quar_rand <- Quar_tidier %>% filter(Scale_of_Conflict != ""international"")"
-"0",""
-"0","# find the mean difference in deaths between the groups 'colonial' and 'revolution'"
-"0","Quar_rand %>% group_by(Scale_of_Conflict) %>% summarize(mean = mean(deaths)) %>% summarize(diff(mean))"

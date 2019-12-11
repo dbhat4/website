@@ -27,7 +27,16 @@
       
       <guid>/projects/</guid>
       <description>Projects Here are some projects I have been working on:
- Project 2  </description>
+ Project 1 Project 2  </description>
+    </item>
+    
+    <item>
+      <title>Project 1 (Exploratory Data Analysis)</title>
+      <link>/project1/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project1/</guid>
+      <description>Exploring the Minimum Wage and Housing Market in the United StatesIntroduction: Two major predictors of the health of the US economy have always consistently been the housing market prices and the wage levels. I found two very interesting datasets, both on Kaggle. The first is a data set of US state and federal minimum wages from 1968 to 2017 per state and county, collected by the US Department of Labor.</description>
     </item>
     
     <item>
