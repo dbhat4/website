@@ -40,8 +40,4 @@ theme = "hugo-sustain"
   identifier = "resume"
   weight = 300
   url = "Diya_Bhat_Resume.pdf"
-[[menu.main]]
-  name = "hobbies"
-  identifier = "hobbies"
-  weight = 400
-  url = "/hobbies/"
+  

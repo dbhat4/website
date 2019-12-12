@@ -20,5 +20,14 @@
       <description>This is a test blog post!</description>
     </item>
     
+    <item>
+      <title>Python in R</title>
+      <link>/blog/pythoninr/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/pythoninr/</guid>
+      <description>One incredible advantage of using R-Markdown is its ability as a platform to be compatible with tons of languages apart from R such as: Python, SQL, Javascript, CSS, and more. R is a powerful tool, but sometimes the need arises to use a different language like Python, that is faster and contains packages that might not be available in R.Here, we explore how to use Python on R-Markdown and an introduction to Python basics.</description>
+    </item>
+    
   </channel>
 </rss>

@@ -32,6 +32,15 @@ Project 2</description>
     </item>
     
     <item>
+      <title></title>
+      <link>/diya_bhat_resume/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/diya_bhat_resume/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Project 1 (Exploratory Data Analysis)</title>
       <link>/project1/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -47,6 +56,15 @@ Project 2</description>
       
       <guid>/project2/</guid>
       <description>Modeling the Important Factors that Contribute to Historical Mass ConflictsIntroduction: Throughout history, we have seen wars and conflicts of varying scale. From the Civil War 1865 to WWI starting in 1914, we have seen schisms root from a multitude of reasons. Our inability to determine which exact factors predict the coming of a war, puts us in an eternal state of peril because we do not know how to avoid what we cannot identify as a direct causation.</description>
+    </item>
+    
+    <item>
+      <title>Python in R</title>
+      <link>/blog/pythoninr/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/pythoninr/</guid>
+      <description>One incredible advantage of using R-Markdown is its ability as a platform to be compatible with tons of languages apart from R such as: Python, SQL, Javascript, CSS, and more. R is a powerful tool, but sometimes the need arises to use a different language like Python, that is faster and contains packages that might not be available in R.Here, we explore how to use Python on R-Markdown and an introduction to Python basics.</description>
     </item>
     
   </channel>
