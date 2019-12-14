@@ -1,7 +1,7 @@
 ---
 title: "Project 1 (Exploratory Data Analysis)"
 author: "Diya Bhat (db39588)"
-date: "10/20/2019"
+date: "October 20, 2019"
 output:
   html_document: default
   pdf_document: default
@@ -12,7 +12,8 @@ output:
 <h1>
 Exploring the Minimum Wage and Housing Market in the United States
 </h1>
-<p>Introduction: Two major predictors of the health of the US economy have always consistently been the housing market prices and the wage levels. I found two very interesting datasets, both on Kaggle. The first is a data set of US state and federal minimum wages from 1968 to 2017 per state and county, collected by the US Department of Labor. This dataset includes 2750 observations and 9 variables. The useful information it provides is: state, year, max and min wage, Consumer Price Index average, and wage equivalencies for 2018 so. The second dataset is a rent index data containing information about state-wise housing prices (per sqft) from 2010 to 2017, originally from Zillow. This dataset includes 13131 observations and 81 variables (because it has not been tidied). Most of the variables are months and years that have been recorded in a wide instead of long format. The other useful variables apart from these are: state, city, populaition rank, and metro. I chose these two datasets because I think that is has a very high potential for analysis and for making predictions about the future.</p>
+<p><img src="/./Project1_files/housing.png" width="626" height="626" />
+Introduction: Two major predictors of the health of the US economy have always consistently been the housing market prices and the wage levels. I found two very interesting datasets, both on Kaggle. The first is a data set of US state and federal minimum wages from 1968 to 2017 per state and county, collected by the US Department of Labor. This dataset includes 2750 observations and 9 variables. The useful information it provides is: state, year, max and min wage, Consumer Price Index average, and wage equivalencies for 2018 so. The second dataset is a rent index data containing information about state-wise housing prices (per sqft) from 2010 to 2017, originally from Zillow. This dataset includes 13131 observations and 81 variables (because it has not been tidied). Most of the variables are months and years that have been recorded in a wide instead of long format. The other useful variables apart from these are: state, city, populaition rank, and metro. I chose these two datasets because I think that is has a very high potential for analysis and for making predictions about the future.</p>
 <p>First I tided up the minimum wage dataset. This dataset seemed to have multiple rows that did not have any actual data and were just represented by three dots (…). I removed these because they were the equivalent of NAs. I also deleted the “Table_Data” column because it was repetitive information (high and low cols already existed for wages)</p>
 <pre class="r"><code>#install.packages(&quot;dplyr&quot;)
 #install.packages(&quot;tidyverse&quot;)

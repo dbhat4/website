@@ -61,7 +61,7 @@
         </div>
         <div class="blog-title">
           <h4>
-          January 1, 0001
+          January 1, 1019
             &nbsp;&nbsp;
             
           </h4>
@@ -75,9 +75,8 @@
 <h1>
 Modeling the Important Factors that Contribute to Historical Mass Conflicts
 </h1>
-<ol start="0" style="list-style-type: decimal">
-<li>Introduction: Throughout history, we have seen wars and conflicts of varying scale. From the Civil War 1865 to WWI starting in 1914, we have seen schisms root from a multitude of reasons. Our inability to determine which exact factors predict the coming of a war, puts us in an eternal state of peril because we do not know how to avoid what we cannot identify as a direct causation. This dataset aims to aid this school of thought by considering a wide range of variables that potentially ignited a war or conflict. These variables are mostly binary. The conflict response is measured via the numeric variables: deaths (extent of damage) and months (duration). Most of the explanatory variables are binary apart from numGroups, which is numeric and deatails the number of participants involved in the conflict. The variables that I will be including in my analysis are: nat.grp (nation vs group in other nation), grp.grpSame (groups in same nation), grp.grpDiff (groups in different nations), difWealth (whether or not there were differences in financial resources between groups), difRelig (whether or not there were differences in religion between groups), sameLanguage (whether or not there were differences in language between groups), difLegal (Whether or not there were differences in legal systems and rules between groups), enjoyFight (whether or not the participants enjoyed fighting), overpopulated (whether or not origin countries were overpopulated), and fightForPay (whether the participants were mecenaries and had financial motivations).</li>
-</ol>
+<p><img src="/./Project2_files/war.jpg" width="700" height="400" />
+0. Introduction: Throughout history, we have seen wars and conflicts of varying scale. From the Civil War 1865 to WWI starting in 1914, we have seen schisms root from a multitude of reasons. Our inability to determine which exact factors predict the coming of a war, puts us in an eternal state of peril because we do not know how to avoid what we cannot identify as a direct causation. This dataset aims to aid this school of thought by considering a wide range of variables that potentially ignited a war or conflict. These variables are mostly binary. The conflict response is measured via the numeric variables: deaths (extent of damage) and months (duration). Most of the explanatory variables are binary apart from numGroups, which is numeric and deatails the number of participants involved in the conflict. The variables that I will be including in my analysis are: nat.grp (nation vs group in other nation), grp.grpSame (groups in same nation), grp.grpDiff (groups in different nations), difWealth (whether or not there were differences in financial resources between groups), difRelig (whether or not there were differences in religion between groups), sameLanguage (whether or not there were differences in language between groups), difLegal (Whether or not there were differences in legal systems and rules between groups), enjoyFight (whether or not the participants enjoyed fighting), overpopulated (whether or not origin countries were overpopulated), and fightForPay (whether the participants were mecenaries and had financial motivations).</p>
 <p><em>I first tidied up the dataset by only selecting the relevant variables, using pivot_longer() to combine the three variables ‘international’, ‘colonial’, and ‘revolution’ into a single variable called ‘Scale_of_Conflict’.</em></p>
 <pre class="r"><code>r = getOption(&quot;repos&quot;)
 r[&quot;CRAN&quot;] = &quot;http://cran.us.r-project.org&quot;
@@ -309,7 +308,7 @@ samp_distn &lt;- replicate(5000, {
 # estimated SEs
 samp_distn %&gt;% t %&gt;% as.data.frame %&gt;% summarize_all(sd)</code></pre>
 <pre><code>##   (Intercept) months_c numGroups_c months_c:numGroups_c
-## 1    201488.8 5003.876    42556.37             1303.449</code></pre>
+## 1    203648.4 5073.155    43208.06             1338.398</code></pre>
 <p><em>When computing bootstrapped errors, we see that the standard error for each of the variables and the interaction siginificantly increases compared to the original SEs. However, they decrease with respect to the robust standard errors. Therefore, the original SEs are probably the best ones to use for the purpose of building the model because we aim to decrease standard error. Becuase of the formula, if the standard error gets smaller, he t- statistic gets bigger and the p-value gets smaller. Therefore, from the previous conclusions about the change in standard error between the original, robust, and bootstrapped SEs, we can conclude that the original SE model would have the lowest p-values, followed by the bootstrapped SE model, and then the robust SE model.</em></p>
 <ol start="5" style="list-style-type: decimal">
 <li>Next, I performed a logistic regression predicting the binary categorical variable ‘sameLanguage’ from all other variables in the datset. ‘sameLanguage’ is a binary variable which is 1 if the fighting groups share the same language and 0 if they hav different languages.</li>

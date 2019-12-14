@@ -6,39 +6,9 @@
     <description>Recent content on Diya Bhat</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Tue, 10 Dec 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>Test blog</title>
-      <link>/blog/test-blog/</link>
-      <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/blog/test-blog/</guid>
-      <description>This is a test blog post!</description>
-    </item>
-    
-    <item>
-      <title>Projects</title>
-      <link>/projects/</link>
-      <pubDate>Sun, 02 Oct 2016 22:55:05 -0400</pubDate>
-      
-      <guid>/projects/</guid>
-      <description>Projects Here are some projects I have been working on:
-Project 1
-Project 2</description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>/diya_bhat_resume/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/diya_bhat_resume/</guid>
-      <description></description>
-    </item>
     
     <item>
       <title>Project 1 (Exploratory Data Analysis)</title>
@@ -55,7 +25,18 @@ Project 2</description>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/project2/</guid>
-      <description>Modeling the Important Factors that Contribute to Historical Mass ConflictsIntroduction: Throughout history, we have seen wars and conflicts of varying scale. From the Civil War 1865 to WWI starting in 1914, we have seen schisms root from a multitude of reasons. Our inability to determine which exact factors predict the coming of a war, puts us in an eternal state of peril because we do not know how to avoid what we cannot identify as a direct causation.</description>
+      <description>Modeling the Important Factors that Contribute to Historical Mass Conflicts0. Introduction: Throughout history, we have seen wars and conflicts of varying scale. From the Civil War 1865 to WWI starting in 1914, we have seen schisms root from a multitude of reasons. Our inability to determine which exact factors predict the coming of a war, puts us in an eternal state of peril because we do not know how to avoid what we cannot identify as a direct causation.</description>
+    </item>
+    
+    <item>
+      <title>Projects</title>
+      <link>/projects/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/projects/</guid>
+      <description>Projects Here are some projects I have been working on:
+Project 1
+Project 2</description>
     </item>
     
     <item>

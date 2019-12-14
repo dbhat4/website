@@ -1,9 +1,10 @@
 ---
 title: "Python in R"
 author: "Diya Bhat"
-date: "12/11/2019"
+date: "December 13, 2019"
 output: html_document
 ---
+![](/blog/PythoninR_files/snake_animated.jpg){width=426px height=426px}
 
 One incredible advantage of using R-Markdown is its ability as a platform to be compatible with tons of languages apart from R such as: Python, SQL, Javascript, CSS, and more. R is a powerful tool, but sometimes the need arises to use a different language like Python, that is faster and contains packages that might not be available in R.
 Here, we explore how to use Python on R-Markdown and an introduction to Python basics.
@@ -54,4 +55,28 @@ for i in urls:
   print(i)
 
 ```
+Here is an example of a function that is useful in a biological context. This function counts the number of '3-mers', which are all the possible 3-base long subsets of a given sequence as outlined in the image below:
+![](/blog/PythoninR_files/kmers.jpeg){width=400px height=400px}
+```{python}
 
+def find_threemers(seq):
+    dictionary = {} # intitialize dictionary
+    for i in range(len(seq) - 1): # loop through the sequence
+        mer = seq[i : i+3] # slice the first three letters each time
+        if len(mer) == 3: # only consider three-letter slices
+            if mer in dictionary:
+                dictionary[mer] += 1 # if threemer already in the dictionary, increase its frequency by 1
+                i += 1
+            else:
+                dictionary[mer] = 1 # if threemer not yet in the dictionary, add it
+                i += 1
+        else:
+            print(dictionary) #print out the dictionary
+
+sequence_1 = "ATCATCATG"
+sequence_2 = "CAGCCCAATCAGGCTCTACTGCCACTAAACTTACGCAGGATATATTTACGCCGACGTACT"
+
+# call the function on the above 2 sequences
+find_threemers(sequence_1)
+find_threemers(sequence_2)
+```
