@@ -40,9 +40,9 @@
       <ul class="nav navbar-nav navbar-right">
       
         
-        <li><a href="/blog/">BLOG</a></li>
-        
         <li><a href="/projects/">PROJECTS</a></li>
+        
+        <li><a href="/blog/">BLOG</a></li>
         
         <li><a href="Diya_Bhat_Resume.pdf">RESUME</a></li>
         
@@ -61,7 +61,7 @@
         </div>
         <div class="blog-title">
           <h4>
-          December 1, 1019
+          December 11
             &nbsp;&nbsp;
             
           </h4>
@@ -208,7 +208,7 @@ mean(new[new$Scale_of_Conflict == &quot;colonial&quot;,]$deaths)}
 <p><img src="/Project2_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <pre class="r"><code># find the p-value using this mean and the vector 
 mean(rand_dist &gt; 729932.9)*2 </code></pre>
-<pre><code>## [1] 8e-04</code></pre>
+<pre><code>## [1] 4e-04</code></pre>
 <p><em>The calculated mean difference in deaths between the ‘colonial’ and ‘revolution’ levels of the categorical variable ‘Scale of Conflict’ was found to be 729932.9 (can be seen plotted as the red line on the graph above). The p-value using this value is 8e-04. Since 8e-04 is much lower than 0.05, we reject the null hypothesis and conclude that the mean deaths between colonial and revolution conflicts are not the same. The histogram above shows the distribution of the mean differences in the rand_dist vector, plotted in the context of the actual mean.</em></p>
 <ol start="3" style="list-style-type: decimal">
 <li>Next, I built a linear regression model predicting the numeric response variable ‘deaths’ from the numeric variables ‘months’ and ‘numGroups’, including their interaction.
@@ -308,7 +308,7 @@ samp_distn &lt;- replicate(5000, {
 # estimated SEs
 samp_distn %&gt;% t %&gt;% as.data.frame %&gt;% summarize_all(sd)</code></pre>
 <pre><code>##   (Intercept) months_c numGroups_c months_c:numGroups_c
-## 1    203648.4 5073.155    43208.06             1338.398</code></pre>
+## 1    203628.3 5042.396    43021.28             1292.871</code></pre>
 <p><em>When computing bootstrapped errors, we see that the standard error for each of the variables and the interaction siginificantly increases compared to the original SEs. However, they decrease with respect to the robust standard errors. Therefore, the original SEs are probably the best ones to use for the purpose of building the model because we aim to decrease standard error. Becuase of the formula, if the standard error gets smaller, he t- statistic gets bigger and the p-value gets smaller. Therefore, from the previous conclusions about the change in standard error between the original, robust, and bootstrapped SEs, we can conclude that the original SE model would have the lowest p-values, followed by the bootstrapped SE model, and then the robust SE model.</em></p>
 <ol start="5" style="list-style-type: decimal">
 <li>Next, I performed a logistic regression predicting the binary categorical variable ‘sameLanguage’ from all other variables in the datset. ‘sameLanguage’ is a binary variable which is 1 if the fighting groups share the same language and 0 if they hav different languages.</li>

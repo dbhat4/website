@@ -1,7 +1,7 @@
 ---
 categories:
 - projects
-date: ""
+date: "2019-11-21"
 showpagemeta: false
 tags:
 - projects

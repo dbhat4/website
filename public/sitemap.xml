@@ -3,15 +3,41 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/blog/</loc>
-  </url>
-  
-  <url>
     <loc>/categories/</loc>
+    <lastmod>2019-11-21T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/</loc>
+    <lastmod>2019-11-21T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/projects/</loc>
+    <lastmod>2019-11-21T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/projects/</loc>
+    <lastmod>2019-11-21T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/projects/</loc>
+    <lastmod>2019-11-21T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/</loc>
+    <lastmod>2019-11-21T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/blog/</loc>
+  </url>
+  
+  <url>
+    <loc>/blog/metformin/</loc>
   </url>
   
   <url>
@@ -23,23 +49,7 @@
   </url>
   
   <url>
-    <loc>/projects/</loc>
-  </url>
-  
-  <url>
-    <loc>/tags/projects/</loc>
-  </url>
-  
-  <url>
-    <loc>/categories/projects/</loc>
-  </url>
-  
-  <url>
     <loc>/blog/pythoninr/</loc>
-  </url>
-  
-  <url>
-    <loc>/tags/</loc>
   </url>
   
 </urlset>
