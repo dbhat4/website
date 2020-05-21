@@ -5,26 +5,8 @@ date: "5/21/2020"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+Given the fact that the world population is currently growing at 1.05% per year (Worldometer, 2020) and the Earth is swiftly reaching its carrying capacity - which is 9 billion - it is no surprise that food security is becoming an increasingly relevant topic. If we plan to farm in a conventional manner to meet this rising food demand, we will need to destroy acres and acres of primary habitat (Bakshi, 2003), and if not, we run the risk of millions more people facing starvation and malnutrition across the world. According to a 2005 study, even if we are just focusing on the 23 most nutritionally important crops, projected crop land will need to be increased by 23% in developing countries to support the population in 2050 (Scharlemann, 2005). This increased land encroachment will have disastrous ecological impacts; a study on distribution and causation of species endangerment in the United States revealed that “agriculture affects more endangered species than urban development” (Brian Czech, 199). The Green Revolution of the late 20th century no doubt helped to curb world starvation and keep global collapse at bay for a few decades. However, Borlaug himself was aware of the fact that it was but a temporary solution; population growth will always present new challenges and we now find ourselves needing a new solution. 
 
-## R Markdown
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;What if we had a way of growing food in an easy to scale-up, faster, and cheaper way? This is precisely what genetically modified organisms (GMOs) seem to offer us. Preliminary statistics alone have shown that genetically modified crops have “Increased global production by 357.7 million tons of corn, 180.3 million tons of soybean, 25.2 million tons of cotton fiber, 10.6 million tons of canola and about a ton of sugar beet” (Norero, 2018). This dramatic increase in yield has greatly reduced the amount of land needed for agriculture. Although from this data, GMOs might seem like a catch-all solution that requires no further thinking, the main problem lies in the public’s wariness and distrust of them as a food source. Although there is no one ‘solution’ to change the perception of society, in this paper, I will discuss how many arguments put forth by the anti-GMO community are without foundation or are sourced from inaccurate data.
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
